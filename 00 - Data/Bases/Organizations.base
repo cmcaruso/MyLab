@@ -1,0 +1,18 @@
+filters:
+  and:
+    - type.contains(link("Organizations"))
+    - '!file.name.contains("Template")'
+views:
+  - type: cards
+    name: Cards
+    image: note.logo
+    cardSize: 180
+    imageFit: contain
+  - type: table
+    name: All
+    order:
+      - file.name
+      - address
+    columnSize:
+      file.name: 184
+      note.address: 370

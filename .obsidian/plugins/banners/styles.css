@@ -1,0 +1,313 @@
+/*
+Banners v0.6.0
+==============
+
+The plugin owns both rendering and styling. No additional CSS snippet and no
+organization/person cssclasses are required.
+
+The frontmatter property names are configurable in Settings -> Banners.
+Defaults:
+  banner -> optional wide background image
+  logo   -> organization layout
+  image  -> person layout
+*/
+
+.banners-view-content {
+  position: relative;
+  isolation: isolate;
+
+  /* Desktop values; the plugin writes the *-desktop/mobile config variables. */
+  --banners-banner-height: var(--banners-banner-height-desktop, 350px);
+  --banners-content-start: var(--banners-content-start-desktop, 355px);
+  --banners-banner-gap: var(--banners-banner-gap-desktop, 12px);
+  --banners-banner-radius: var(--banners-banner-radius-desktop, 17px);
+
+  --banners-org-logo-size: var(--banners-org-logo-size-desktop, 60px);
+  --banners-org-logo-gap: var(--banners-org-logo-gap-desktop, 14px);
+  --banners-org-logo-radius: var(--banners-org-logo-radius-desktop, 6px);
+  --banners-org-header-bottom-gap: var(--banners-org-bottom-gap-desktop, 22px);
+
+  --banners-person-image-size: var(--banners-person-image-size-desktop, 210px);
+  --banners-person-image-gap: var(--banners-person-image-gap-desktop, 14px);
+  --banners-person-header-bottom-gap: var(--banners-person-bottom-gap-desktop, 24px);
+}
+
+/* =========================================================
+   BANNER
+   ========================================================= */
+
+.banners-background-banner {
+  position: absolute !important;
+  top: 0;
+  left: var(--banners-banner-gap);
+  right: var(--banners-banner-gap);
+  height: var(--banners-banner-height);
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position:
+    var(--banners-banner-x, 50%)
+    var(--banners-banner-y, 60%);
+
+  border-radius: var(--banners-banner-radius);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% + var(--banners-banner-fade, -40%)),
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% + var(--banners-banner-fade, -40%)),
+    transparent 100%
+  );
+}
+
+.banners-banner-sizer {
+  padding-top: var(--banners-content-start) !important;
+}
+
+.banners-view-content .metadata-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Property rows are marked dynamically so custom property names also work. */
+.banners-hidden-property {
+  display: none !important;
+}
+
+/* =========================================================
+   SHARED HEADER
+   ========================================================= */
+
+.banners-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+}
+
+.banners-profile-image {
+  display: block;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Person portraits can optionally act as a fullscreen-image trigger. */
+.banners-person .banners-clickable-person-image {
+  pointer-events: auto;
+  cursor: zoom-in;
+}
+
+.banners-person .banners-clickable-person-image:focus-visible {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   ORGANIZATION: logo left of title
+   ========================================================= */
+
+.banners-organization .banners-organization-header {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--banners-org-logo-gap) !important;
+  margin: 0 0 var(--banners-org-header-bottom-gap) 0 !important;
+}
+
+.banners-organization .banners-profile-image {
+  width: var(--banners-org-logo-size) !important;
+  height: var(--banners-org-logo-size) !important;
+  flex: 0 0 var(--banners-org-logo-size) !important;
+
+  object-fit: contain !important;
+  object-position: center !important;
+  border-radius: var(--banners-org-logo-radius) !important;
+}
+
+.banners-organization .inline-title {
+  min-height: var(--banners-org-logo-size);
+  display: flex;
+  align-items: center;
+
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+
+  color: var(--inline-title-color) !important;
+  text-shadow: none !important;
+}
+
+/* =========================================================
+   PERSON: portrait with centered name underneath
+   ========================================================= */
+
+.banners-person .banners-person-header {
+  position: relative !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+
+  width: 100% !important;
+  gap: var(--banners-person-image-gap) !important;
+  margin: 0 0 var(--banners-person-header-bottom-gap) 0 !important;
+  overflow: visible !important;
+}
+
+.banners-person .banners-profile-image {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+
+  width: var(--banners-person-image-size) !important;
+  height: var(--banners-person-image-size) !important;
+  flex: 0 0 var(--banners-person-image-size) !important;
+
+  margin: 0 auto !important;
+  object-fit: cover !important;
+  object-position:
+    var(--banners-person-image-x, 50%)
+    var(--banners-person-image-y, 0%) !important;
+  border-radius: var(--banners-person-image-radius, 50%) !important;
+  z-index: auto !important;
+}
+
+.banners-person .inline-title {
+  display: block !important;
+  width: 100% !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+
+  color: var(--inline-title-color) !important;
+  text-shadow: none !important;
+}
+
+.banners-person .metadata-container {
+  margin-top: 0 !important;
+  margin-bottom: var(--metadata-gap, 0px) !important;
+}
+
+/* =========================================================
+   PERSON IMAGE FULLSCREEN LIGHTBOX
+   ========================================================= */
+
+.modal.banners-image-modal {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+.banners-image-modal .modal-close-button {
+  z-index: 2;
+}
+
+.banners-image-modal-content {
+  width: 100%;
+  height: 100%;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden !important;
+}
+
+.banners-fullscreen-person-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  cursor: zoom-out;
+  user-select: none;
+}
+
+/* =========================================================
+   MOBILE / iPHONE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  body.is-mobile .banners-view-content {
+    --banners-banner-height: var(--banners-banner-height-mobile, 350px);
+    --banners-banner-gap: var(--banners-banner-gap-mobile, 0px);
+
+    --banners-org-logo-size: var(--banners-org-logo-size-mobile, 60px);
+    --banners-org-logo-gap: var(--banners-org-logo-gap-mobile, 12px);
+    --banners-org-logo-radius: var(--banners-org-logo-radius-mobile, 7px);
+    --banners-org-header-bottom-gap: var(--banners-org-bottom-gap-mobile, 22px);
+
+    --banners-person-image-size: var(--banners-person-image-size-mobile, 170px);
+    --banners-person-image-gap: var(--banners-person-image-gap-mobile, 12px);
+    --banners-person-header-bottom-gap: var(--banners-person-bottom-gap-mobile, 20px);
+  }
+
+  body.is-mobile .banners-background-banner {
+    border-radius:
+      0
+      0
+      var(--banners-banner-radius-mobile, 17px)
+      var(--banners-banner-radius-mobile, 17px);
+  }
+
+  /* Organization content can begin inside the fading part of the banner. */
+  body.is-mobile .banners-view-content.banners-organization {
+    --banners-content-start: var(--banners-org-content-start-mobile, 295px);
+  }
+
+  /* Banner-only and person notes keep their own mobile spacing. */
+  body.is-mobile .banners-view-content:not(.banners-organization) {
+    --banners-content-start: var(--banners-other-content-start-mobile, 360px);
+  }
+
+  body.is-mobile .banners-organization .inline-title {
+    overflow-wrap: anywhere;
+  }
+
+  body.is-mobile .banners-person .metadata-container {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+/* =========================================================
+   SETTINGS PAGE
+   ========================================================= */
+
+.banners-settings-heading {
+  margin-top: 2em;
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.banners-number-input {
+  width: 90px !important;
+}
+
+.banners-properties-textarea {
+  width: 220px !important;
+  min-height: 120px;
+  resize: vertical;
+  font-family: var(--font-monospace);
+}

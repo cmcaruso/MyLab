@@ -1,0 +1,9 @@
+{
+  "id": "generic-kanban-view",
+  "name": "Generic Kanban View",
+  "version": "0.4.2",
+  "minAppVersion": "1.10.0",
+  "description": "Adds a reusable Kanban layout to Bases with native property rendering, formula-based grouping, per-view quick filters, ordered columns, colors, and drag-and-drop updates for writable properties.",
+  "author": "Camillo",
+  "isDesktopOnly": false
+}

@@ -1,0 +1,6 @@
+filters:
+  and:
+    - type.contains(link("References"))
+views:
+  - type: table
+    name: Table

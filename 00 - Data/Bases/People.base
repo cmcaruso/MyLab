@@ -1,0 +1,62 @@
+filters:
+  and:
+    - type.contains(link("People"))
+    - '!file.name.contains("Template")'
+views:
+  - type: cards
+    name: Cards
+    filters:
+      and:
+        - archive != true
+    groupBy:
+      property: org
+      direction: ASC
+    order:
+      - file.name
+    sort:
+      - property: title
+        direction: ASC
+    image: note.image
+    cardSize: 180
+  - type: table
+    name: Table
+    filters:
+      and:
+        - archive != true
+    order:
+      - file.name
+      - title
+      - role
+      - org
+      - email
+      - department
+      - unit
+      - orcID
+    rowHeight: medium
+  - type: table
+    name: All
+    order:
+      - archive
+      - file.name
+      - title
+      - role
+      - org
+      - email
+      - department
+      - unit
+      - orcID
+      - image
+    sort:
+      - property: file.name
+        direction: ASC
+    rowHeight: medium
+  - type: cards
+    name: Related People
+    filters:
+      and:
+        - list(org).contains(this)
+        - archive != true
+    sort:
+      - property: title
+        direction: ASC
+    image: note.image

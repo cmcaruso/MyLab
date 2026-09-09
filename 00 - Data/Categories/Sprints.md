@@ -1,0 +1,6 @@
+---
+type:
+  - "[[Categories]]"
+---
+
+![[Sprints.base]]

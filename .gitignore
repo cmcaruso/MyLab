@@ -1,0 +1,13 @@
+# Obsidian per-device UI state
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# Third-party plugins users install themselves (see README)
+.obsidian/plugins/omnisearch/
+
+# iCloud Drive artefacts
+* [0-9].json
+*.icloud
+
+# macOS
+*.DS_Store

@@ -1,0 +1,25 @@
+{
+  "types": {
+    "aliases": "aliases",
+    "cssclasses": "multitext",
+    "tags": "tags",
+    "email": "multitext",
+    "title": "multitext",
+    "role": "multitext",
+    "type": "multitext",
+    "department": "multitext",
+    "unit": "multitext",
+    "projects": "multitext",
+    "archive": "checkbox",
+    "activities": "multitext",
+    "missions": "multitext",
+    "epics": "multitext",
+    "stories": "multitext",
+    "people": "multitext",
+    "related to": "multitext",
+    "sprints": "multitext",
+    "assignees": "multitext",
+    "start": "datetime",
+    "scheduled": "datetime"
+  }
+}

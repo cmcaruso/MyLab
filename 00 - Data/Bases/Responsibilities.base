@@ -1,0 +1,64 @@
+filters:
+  and:
+    - type.contains(link("Responsibilities"))
+formulas:
+  Projects: file.backlinks.filter(value.asFile().properties.type.contains("Projects"))
+  Active Projects: formula.Projects.filter(value.asFile().properties.archive != true)
+  active: if(!formula["Active Projects"].isEmpty(), "Active Projects", "Not Active Projects")
+properties:
+  formula.Active Projects:
+    displayName: active projects
+  formula.Projects:
+    displayName: projects
+views:
+  - type: generic-kanban
+    name: Active
+    order:
+      - file.name
+      - missions
+      - formula.Active Projects
+    sort: []
+    columnSize:
+      note.missions: 223
+      formula.Active Projects: 572
+      formula.Projects: 281
+    rowHeight: medium
+    columnProperty: formula.active
+    columns:
+      - Not Active Projects
+      - Active Projects
+    columnColors: []
+    columnColorMode: none
+    quickFilterProperties:
+      - note.missions
+  - type: generic-kanban
+    name: Related
+    filters:
+      and:
+        - list(missions).contains(this)
+    order:
+      - file.name
+      - missions
+      - formula.Active Projects
+    sort: []
+    columnSize:
+      note.missions: 223
+      formula.Active Projects: 572
+      formula.Projects: 281
+    rowHeight: medium
+    columnProperty: formula.active
+    columns:
+      - Not Active Projects
+      - Active Projects
+    columnColors: []
+    columnColorMode: none
+    quickFilterProperties:
+      - note.missions
+    showEmpty: false
+  - type: table
+    name: All
+    order:
+      - file.name
+      - missions
+      - formula.Active Projects
+      - formula.Projects

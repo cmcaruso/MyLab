@@ -1,0 +1,54 @@
+filters:
+  and:
+    - type.contains(link("Tasks"))
+views:
+  - type: generic-kanban
+    name: Current Sprint
+    filters:
+      and:
+        - stories.filter(value.asFile().properties.sprints.filter(value.asFile().name.endsWith("- Current"))).length > 0
+        - archive != true
+    order:
+      - file.name
+      - status
+      - assignees
+      - scheduled
+    sort: []
+    columnProperty: note.status
+    columns:
+      - Backlog
+      - Planning
+      - In Progress
+      - Done
+    titleProperty: file.name
+    columnColors:
+      - "Planning = #00b3ff"
+      - "In Progress = #fed401"
+      - "Done = #06c650"
+    columnColorMode: subtle
+    showEmpty: false
+    quickFilterProperties:
+      - note.assignees
+      - note.stories
+  - type: table
+    name: All
+    order:
+      - file.name
+      - status
+      - stories
+    sort: []
+    columnSize:
+      file.name: 245
+      note.stories: 472
+    rowHeight: medium
+  - type: cards
+    name: Related
+    filters:
+      and:
+        - list(stories).contains(this)
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - file.name
+      - status

@@ -1,0 +1,12 @@
+filters:
+  and:
+    - type.contains(link("Sprints"))
+views:
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - start
+      - end
+    columnSize:
+      file.name: 183

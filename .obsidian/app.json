@@ -1,0 +1,13 @@
+{
+  "alwaysUpdateLinks": true,
+  "useMarkdownLinks": false,
+  "showUnsupportedFiles": true,
+  "openBehavior": "file:Home.md",
+  "userIgnoreFilters": [
+    "00 - Data/Templates/",
+    "00 - Data/Bases/",
+    "00 - Data/Categories/"
+  ],
+  "mobilePullAction": "omnisearch:show-modal",
+  "newFileLocation": "current"
+}

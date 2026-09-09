@@ -1,0 +1,24 @@
+views:
+  - type: table
+    name: Recent
+    filters:
+      and:
+        - file.mtime >= today()-"7d"
+    order:
+      - file.name
+      - file.mtime
+      - type
+    sort:
+      - property: file.mtime
+        direction: DESC
+    columnSize:
+      file.name: 162
+  - type: table
+    name: All
+    order:
+      - file.name
+      - file.mtime
+      - type
+    sort:
+      - property: file.mtime
+        direction: DESC

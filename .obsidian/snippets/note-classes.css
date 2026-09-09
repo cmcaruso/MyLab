@@ -1,0 +1,46 @@
+/* =========================================================
+   WIDE
+   Use more of the available horizontal space
+   ========================================================= */
+
+.wide {
+  --file-line-width: 100%;
+}
+
+
+/* =========================================================
+   HIDDEN TYPE
+   Hide the "type" property
+   ========================================================= */
+
+.hidden-type .metadata-property[data-property-key="type"] {
+  display: none;
+}
+
+
+/* =========================================================
+   HIDDEN CSS
+   Hide the "cssclasses" property
+   ========================================================= */
+
+.hidden-css .metadata-property[data-property-key="cssclasses"] {
+  display: none;
+}
+
+/* =========================================================
+   JUSTIFY
+   Justify the text in the note
+   ========================================================= */
+.markdown-preview-view.justify,
+.markdown-source-view.mod-cm6.justify .cm-line {
+  text-align: justify;
+}
+
+/* =========================================================
+   HIDDEN PROPERTIES
+   Hide the entire Properties section
+   ========================================================= */
+.markdown-preview-view.hidden-properties .metadata-container,
+.markdown-source-view.hidden-properties .metadata-container {
+  display: none !important;
+}

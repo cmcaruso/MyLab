@@ -1,0 +1,6 @@
+---
+type:
+  - "[[Categories]]"
+---
+
+![[Epics.base]]

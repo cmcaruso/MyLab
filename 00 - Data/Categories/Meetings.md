@@ -1,0 +1,5 @@
+---
+type:
+  - "[[Categories]]"
+---
+![[Calendar.base]]

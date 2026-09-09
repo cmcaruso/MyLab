@@ -1,0 +1,65 @@
+filters:
+  or:
+    - type.containsAny(link("Meetings"))
+    - and:
+        - type.containsAny(link("Tasks"))
+        - or:
+            - "!start.isEmpty()"
+    - and:
+        - type.contains(link("Events"))
+formulas:
+  end: if(end.isEmpty(), start + duration, end)
+  duration: if(duration.isEmpty(), end - start, duration)
+views:
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - type
+      - start
+      - formula.duration
+      - formula.end
+    sort:
+      - property: start
+        direction: DESC
+    columnSize:
+      file.name: 204
+      note.start: 176
+      formula.end: 161
+  - type: table
+    name: All
+    order:
+      - file.name
+      - start
+      - duration
+      - formula.end
+      - related to
+    sort:
+      - property: related to
+        direction: ASC
+      - property: start
+        direction: ASC
+      - property: file.name
+        direction: ASC
+    columnSize:
+      file.name: 204
+      note.start: 176
+      formula.end: 161
+  - type: cards
+    name: Related
+    filters:
+      and:
+        - file.hasLink(this)
+    order:
+      - file.name
+      - start
+      - duration
+      - formula.end
+      - related to
+    sort:
+      - property: start
+        direction: DESC
+    columnSize:
+      file.name: 204
+      note.start: 176
+      formula.end: 161

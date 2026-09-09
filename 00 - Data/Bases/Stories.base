@@ -1,0 +1,97 @@
+filters:
+  and:
+    - type.contains(link("Stories"))
+formulas:
+  status: |-
+    if(
+      formula.Tasks.isEmpty(),
+      "Backlog",
+      if(
+        formula.Tasks.filter(value.asFile().properties.status == "Done").length == formula.Tasks.length,
+        "Done",
+        if(
+          formula.Tasks.filter(value.asFile().properties.status == "Planning").length == formula.Tasks.length,
+          "Planning",
+          if(
+            formula.Tasks.filter(value.asFile().properties.status == "Backlog").length == formula.Tasks.length,
+            "Backlog",
+            "In Progress"
+          )
+        )
+      )
+    )
+  tasks: file.backlinks.filter(value.asFile().properties.type.contains("Tasks"))
+views:
+  - type: generic-kanban
+    name: Current Sprint
+    filters:
+      and:
+        - sprints.filter(value.asFile().name.endsWith("- Current")).length > 0
+        - archive != true
+    order:
+      - file.name
+      - epics
+    columnProperty: formula.status
+    columns:
+      - Backlog
+      - Planning
+      - In Progress
+      - Done
+    columnColors:
+      - "Planning = #00b3ff"
+      - "In Progress = #fed401"
+      - "Done = #06c650"
+    columnColorMode: subtle
+    showEmpty: false
+    quickFilterProperties:
+      - note.epics
+  - type: generic-kanban
+    name: Active
+    filters:
+      and:
+        - archive != true
+    order:
+      - file.name
+      - epics
+    columnProperty: formula.status
+    columns:
+      - Backlog
+      - Planning
+      - In Progress
+      - Done
+    columnColors:
+      - "Planning = #00b3ff"
+      - "In Progress = #fed401"
+      - "Done = #06c650"
+    columnColorMode: subtle
+    showEmpty: false
+  - type: generic-kanban
+    name: Related
+    filters:
+      and:
+        - list(epics).contains(this)
+    order:
+      - file.name
+      - epics
+    columnProperty: formula.status
+    columns:
+      - Backlog
+      - Planning
+      - In Progress
+      - Done
+    columnColors:
+      - "Planning = #00b3ff"
+      - "In Progress = #fed401"
+      - "Done = #06c650"
+    columnColorMode: subtle
+    showEmpty: false
+  - type: table
+    name: All
+    order:
+      - file.name
+      - status
+      - formula.status
+      - formula.tasks
+    sort: []
+    columnSize:
+      file.name: 408

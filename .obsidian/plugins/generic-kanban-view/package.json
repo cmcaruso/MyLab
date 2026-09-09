@@ -1,0 +1,8 @@
+{
+  "name": "generic-kanban-view",
+  "version": "0.4.2",
+  "private": true,
+  "description": "Generic Kanban view for Obsidian Bases",
+  "main": "main.js",
+  "license": "MIT"
+}

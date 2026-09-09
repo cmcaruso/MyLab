@@ -1,0 +1,79 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": false,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "[\"type\":People]",
+      "color": {
+        "a": 1,
+        "rgb": 14725458
+      }
+    },
+    {
+      "query": "[\"type\":Organizations]",
+      "color": {
+        "a": 1,
+        "rgb": 25086
+      }
+    },
+    {
+      "query": "[\"type\":Projects]",
+      "color": {
+        "a": 1,
+        "rgb": 12066545
+      }
+    },
+    {
+      "query": "[\"type\":Epics]",
+      "color": {
+        "a": 1,
+        "rgb": 3387857
+      }
+    },
+    {
+      "query": "[\"type\":Stories]",
+      "color": {
+        "a": 1,
+        "rgb": 9329168
+      }
+    },
+    {
+      "query": "[\"type\":Tasks]",
+      "color": {
+        "a": 1,
+        "rgb": 5767063
+      }
+    },
+    {
+      "query": "[\"type\":Issues]",
+      "color": {
+        "a": 1,
+        "rgb": 16716820
+      }
+    },
+    {
+      "query": "[\"type\":Daily Notes",
+      "color": {
+        "a": 1,
+        "rgb": 14810957
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": true,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.28590726390906945,
+  "close": true
+}

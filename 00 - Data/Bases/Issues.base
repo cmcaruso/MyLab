@@ -1,0 +1,11 @@
+filters:
+  and:
+    - type.contains(link("Issues"))
+views:
+  - type: table
+    name: All
+  - type: table
+    name: Active
+    filters:
+      and:
+        - archive != true
