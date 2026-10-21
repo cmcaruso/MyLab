@@ -17,7 +17,7 @@ views:
       - - "[[ORG-0002|Greenvale University]]"
       - - "[[ORG-0003|St. Aurelian Hospital]]"
       - - "[[ORG-0005|Nordhaven University]]"
-      - - "[[ORG-0004|Nimbus Diagnostics]]"
+      - - "[[ORG-0004|Lumenbridge Diagnostics]]"
       - - "[[ORG-0001|UCBM]]"
     order:
       - formula.Name

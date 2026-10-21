@@ -104,7 +104,7 @@ def check_text(text):
 # Made-up fixtures: no real person, address or token.
 SELFTEST = [
     (True, "Assistant: I added the feed. URL: https://calendar.example.com/ical/feeds/7f3a9c2e1b8d4f60a5e2c9b7/private-91d2e4f8a6c3b5d7e9f1a2c4b6d8e0f2/basic.ics"),
-    (True, "Tool result: attendees: mario.verdi@ospedale-esempio.it, giulia.bianchi@uni-esempio.it; phone +39 333 123 4567"),
+    (True, "Tool result: attendees: mario.verdi@hospital.example, giulia.bianchi@university.example; phone +39 333 123 4567"),
     (True, "Bash output: export OPENAI_API_KEY=sk-proj-4f9Qx7LmT2vB8nK3wR6yH1cZ5dJ0aE9sU4pG7iO2"),
     (True, "Invite description: Hi all, as discussed privately, Dr. Verdi's contract will not be renewed; please keep this confidential until the board meets on Friday."),
     (False, "Assistant: I edited src/patch.ts: the getter now falls back to core's groups when the view is not table or cards. 47 tests pass."),
