@@ -275,12 +275,12 @@ Everything an agent needs is in the vault. Agent-neutral material is in `99 - Ag
 
 ### nimble, a local second opinion (optional)
 
-**nimble** is [Bespoke-Nimble-9B](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B) (Apache 2.0), a small decision model run locally with [Ollama](https://ollama.com). It doesn't chat. It scores lettered choices, so its probabilities are its confidence: "Story 0.41, Task 0.38".
+**nimble** is [Bespoke-Nimble-9B](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B) (Apache 2.0), a small decision model run locally with [Ollama](https://ollama.com). It doesn't chat. It answers choice and yes/no questions with a probability for each answer, so its probabilities are its confidence: "Story 0.41, Task 0.38".
 
-- `nimble_classify.py` reproduces its prompt contract, and walks type → Project → Epic → Story one small question at a time.
+- `nimble_classify.py` asks it through Ollama's decision endpoint (`/v1/systemone`), walking type → Project → Epic → Story one small question at a time.
 - `nimble_privacy.py` asks it, locally, whether a transcript contains private data. It reports only line ranges, never the text.
 
-To use it, register a GGUF build (e.g. [ggml-org/Bespoke-Nimble-9B-v3-GGUF](https://huggingface.co/ggml-org/Bespoke-Nimble-9B-v3-GGUF)) in Ollama under the name **`nimble`**, keep Ollama running, and check with `python3 "99 - Agents/agents/scripts/nimble_privacy.py" --selftest`. Without nimble, everything still works: the agent says nimble is unavailable and logs `"nimble_id": null`.
+To use it, install **Ollama 0.40.4 or newer**, run `ollama pull nimble`, and keep Ollama running. Check with `python3 "99 - Agents/agents/scripts/nimble_privacy.py" --selftest`; it should report `8/8`. Decision models answer only on `/v1/systemone`, not on `ollama run` or `/api/generate`. Without nimble, everything still works: the agent says nimble is unavailable and logs `"nimble_id": null`.
 
 ### Zotero (for `/paper`, optional)
 
@@ -397,7 +397,7 @@ Change `priority` values (or add another styled property) in *Settings → Prope
 - **List Groups depends on Bases internals.** If a future Obsidian release moves them, it turns itself off with a notice and grouping falls back to core behaviour.
 - **The example dates age.** The *Current Sprint* boards and the Calendar's "today" are empty unless a sprint covers today (see [Tour](#tour-of-the-example-lab)).
 - **Agent tooling assumes macOS or Linux.** It needs `python3` (3.7+ works, standard library only) and `jq` for the Claude hooks. It is untested on Windows.
-- **nimble's registration in Ollama isn't scripted.** See the Bespoke-Nimble model card for the GGUF and prompt details.
+- **nimble needs Ollama's decision endpoint.** It answers only on `/v1/systemone` (Ollama 0.40.4 or later); older Ollama versions can't serve it to the scripts.
 
 ---
 

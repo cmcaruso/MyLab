@@ -46,4 +46,4 @@ All agent material is in the visible folder `99 - Agents/`: `agents/` is agent-n
 
 ## Local model: nimble
 
-`nimble` (Ollama; Bespoke-Nimble-9B) is a decision model, not a chat model: it scores lettered choices, and the probabilities are its confidence. Call it only through `99 - Agents/agents/scripts/nimble_classify.py`, which reproduces its exact prompt contract. Ollama must be running (`open -a Ollama`). nimble is optional: when it isn't available, say so, go on without it, and log `"nimble_id": null`. Setup is in the README.
+`nimble` (Ollama; Bespoke-Nimble-9B) is a decision model, not a chat model: it answers choice and yes/no questions, and the probabilities are its confidence. Call it only through `99 - Agents/agents/scripts/nimble_classify.py`, which asks Ollama's decision endpoint (`/v1/systemone`, Ollama ≥ 0.40.4). Ollama must be running (`open -a Ollama`). nimble is optional: when it isn't available, say so, go on without it, and log `"nimble_id": null`. Setup is in the README.
