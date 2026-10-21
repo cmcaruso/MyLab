@@ -1,0 +1,9 @@
+{
+  "id": "property-styles",
+  "name": "Property Styles",
+  "version": "0.2.0",
+  "minAppVersion": "1.10.0",
+  "description": "Define the values of a text property (e.g. Task priority): their order, colors and how they look on Generic Kanban cards. Renames and reorders are applied to notes, bases and templates after a preview.",
+  "author": "Camillo Maria Caruso",
+  "isDesktopOnly": false
+}

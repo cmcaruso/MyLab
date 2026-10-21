@@ -1,0 +1,9 @@
+{
+  "id": "file-titles",
+  "name": "File Titles",
+  "version": "0.2.0",
+  "minAppVersion": "1.5.0",
+  "description": "Show a frontmatter display name instead of ID filenames in the file explorer, tabs, note titles, rendered links and graph view.",
+  "author": "Camillo Maria Caruso",
+  "isDesktopOnly": false
+}

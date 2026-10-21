@@ -1,0 +1,13 @@
+/* Live preview of the configured values in the settings tab. */
+.property-styles-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-4-2);
+  margin: var(--size-4-2) 0 var(--size-4-4);
+}
+
+.property-styles-preview .generic-kanban-card {
+  width: 180px;
+  margin-bottom: 0;
+  cursor: default;
+}

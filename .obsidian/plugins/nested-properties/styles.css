@@ -1,0 +1,112 @@
+/* Nested Properties: tree rendering of object-valued frontmatter. */
+
+/* Each level is a two-column grid (key | value) so values line up;
+   rows and heads dissolve into it, nested children span both columns. */
+.np-tree,
+.np-children {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: var(--size-4-3);
+  row-gap: 1px;
+  align-items: center;
+}
+
+.np-tree {
+  width: 100%;
+  padding: var(--size-2-1) 0;
+  font-size: var(--metadata-input-font-size, var(--font-smaller));
+}
+
+.np-row,
+.np-head {
+  display: contents;
+}
+
+.np-key {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.np-toggle {
+  cursor: var(--cursor);
+  user-select: none;
+}
+
+.np-toggle::before {
+  content: "▾";
+  display: inline-block;
+  width: 1em;
+  color: var(--text-faint);
+  transition: transform 100ms ease-in-out;
+}
+
+.np-row.is-collapsed > .np-head > .np-toggle::before {
+  transform: rotate(-90deg);
+}
+
+.np-summary,
+.np-empty {
+  color: var(--text-faint);
+}
+
+.np-row:not(.is-collapsed) > .np-head > .np-summary {
+  display: none;
+}
+
+.np-row.is-collapsed > .np-children {
+  display: none;
+}
+
+.np-children {
+  grid-column: 1 / -1;
+  margin-left: 0.45em;
+  padding-left: calc(0.55em + var(--size-4-1));
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+.np-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.np-tree .np-input {
+  width: 100%;
+  min-width: 0;
+  height: 24px;
+  padding: 0 var(--size-4-1);
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-normal);
+  font-size: inherit;
+}
+
+.np-tree .np-input:hover {
+  background: var(--background-modifier-hover);
+}
+
+.np-tree .np-input:focus {
+  background: var(--background-modifier-form-field);
+  box-shadow: 0 0 0 1px var(--background-modifier-border-focus);
+}
+
+.np-tree .np-input.is-number {
+  font-variant-numeric: tabular-nums;
+}
+
+.np-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2-2);
+}
+
+.np-chip {
+  padding: 0 var(--size-4-2);
+  border-radius: var(--radius-s);
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}

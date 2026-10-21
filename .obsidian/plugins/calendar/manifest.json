@@ -1,0 +1,9 @@
+{
+	"id": "calendar",
+	"name": "Calendar",
+	"version": "2026.10.19",
+	"minAppVersion": "1.13.2",
+	"description": "Read-only Google, M365 and ICS calendars, with EVT meeting notes and an agent-readable event cache.",
+	"author": "Camillo Caruso",
+	"isDesktopOnly": false
+}

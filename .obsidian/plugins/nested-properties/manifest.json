@@ -1,0 +1,9 @@
+{
+  "id": "nested-properties",
+  "name": "Nested Properties",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Show nested frontmatter objects as a tree in the Properties panel, with editable leaf values.",
+  "author": "Camillo Maria Caruso",
+  "isDesktopOnly": false
+}

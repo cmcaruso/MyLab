@@ -123,6 +123,25 @@ Reload Obsidian and enable **Generic Kanban View** in Community plugins.
 Dragging a card updates the selected frontmatter property in the underlying Markdown note. Formula results are never overwritten.
 
 
+## Styling by property value
+
+Each property row on a card carries two attributes:
+
+- `data-property`: the Bases property id, e.g. `note.priority`;
+- `data-value`: the value as text, e.g. `High`.
+
+CSS snippets can then style cards by value, for example:
+
+```css
+.generic-kanban-card-property[data-property="note.priority"][data-value="High"] .generic-kanban-card-property-value {
+  color: #f76b15;
+}
+```
+
+## 0.4.3
+
+- Adds `data-property` and `data-value` attributes to card property rows for value-based styling.
+
 ## 0.4.2
 
 - Fixes a regression where registering the native Bases toolbar action in the view constructor could prevent Kanban views from rendering.

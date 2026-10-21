@@ -941,6 +941,13 @@ class KanbanBasesView extends BasesView {
           if (!this.isRenderableValue(value)) continue;
 
           const row = meta.createDiv({ cls: 'generic-kanban-card-property' });
+          // Expose the property id and its text value so CSS snippets can style cards by value.
+          row.dataset.property = property;
+          try {
+            row.dataset.value = String(value.toString()).trim();
+          } catch {
+            // Leave data-value unset when the value cannot be stringified.
+          }
           row.createSpan({
             cls: 'generic-kanban-card-property-name',
             text: this.config.getDisplayName(property)

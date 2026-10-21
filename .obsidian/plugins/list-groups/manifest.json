@@ -1,0 +1,9 @@
+{
+	"id": "list-groups",
+	"name": "List Groups",
+	"version": "2026.10.20",
+	"minAppVersion": "1.14.4",
+	"description": "Splits Bases groups by list values: in Cards and Table views, a note appears under every value of its list.",
+	"author": "Camillo Caruso",
+	"isDesktopOnly": false
+}

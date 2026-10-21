@@ -1,0 +1,73 @@
+{
+  "schemes": [
+    {
+      "property": "priority",
+      "folders": [
+        "00 - Data/Tasks",
+        "00 - Data/Projects"
+      ],
+      "templates": [
+        "00 - Data/Templates/Tasks Template.md",
+        "00 - Data/Templates/Project Template.md"
+      ],
+      "bases": [
+        {
+          "file": "00 - Data/Bases/Tasks.base",
+          "rankFormula": "PriorityRank",
+          "deriveFrom": ""
+        },
+        {
+          "file": "00 - Data/Bases/Projects.base",
+          "rankFormula": "PriorityRank",
+          "deriveFrom": ""
+        },
+        {
+          "file": "00 - Data/Bases/Stories.base",
+          "rankFormula": "PriorityRank",
+          "deriveFrom": "PriorityPool"
+        },
+        {
+          "file": "00 - Data/Bases/Epics.base",
+          "rankFormula": "PriorityRank",
+          "deriveFrom": "PriorityPool"
+        }
+      ],
+      "defaultId": "medium",
+      "columnOrder": "lowest-first",
+      "styles": {
+        "pill": true,
+        "stripe": true,
+        "tint": false
+      },
+      "values": [
+        {
+          "id": "urgent",
+          "name": "Urgent",
+          "color": "#e5484d"
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "color": "#f76b15"
+        },
+        {
+          "id": "medium",
+          "name": "Medium",
+          "color": "#fed401"
+        },
+        {
+          "id": "low",
+          "name": "Low",
+          "color": "#00b3ff"
+        }
+      ],
+      "applied": {
+        "urgent": "Urgent",
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      },
+      "id": "priority"
+    }
+  ]
+}
