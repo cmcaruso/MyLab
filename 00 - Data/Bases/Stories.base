@@ -1,7 +1,12 @@
 filters:
-  and:
+  or:
     - type.contains(link("Stories"))
+    - file.folder == "00 - Data/Stories"
 formulas:
+  Name: file.asLink(if(name, name, file.name))
+  PriorityPool: if(formula.tasks.filter(value.asFile().properties.status != "Done").isEmpty(), formula.tasks, formula.tasks.filter(value.asFile().properties.status != "Done"))
+  priority: if(formula.PriorityPool.filter(value.asFile().properties.priority == "Urgent").length > 0, "Urgent", if(formula.PriorityPool.filter(value.asFile().properties.priority == "High").length > 0, "High", if(formula.PriorityPool.filter(value.asFile().properties.priority == "Medium").length > 0, "Medium", if(formula.PriorityPool.filter(value.asFile().properties.priority == "Low").length > 0, "Low", ""))))
+  PriorityRank: if(formula.priority == "Urgent", 0, if(formula.priority == "High", 1, if(formula.priority == "Medium", 2, if(formula.priority == "Low", 3, 4))))
   status: |-
     if(
       formula.Tasks.isEmpty(),
@@ -20,17 +25,45 @@ formulas:
         )
       )
     )
-  tasks: file.backlinks.filter(value.asFile().properties.type.contains("Tasks"))
+  tasks: file.backlinks.filter(value.asFile().properties.type.contains("Tasks")).map(value.asFile().asLink(if(value.asFile().properties.name, value.asFile().properties.name, value.asFile().name)))
+  SprintOrg: if(sprints.isEmpty(), "Backlog", if(sprints.filter(date(value.asFile().properties.start) <= today() && date(value.asFile().properties.end) >= today()).length > 0, "Current", if(sprints.filter(date(value.asFile().properties.start) > today()).length > 0, "Future", "Past")))
 views:
+  - type: generic-kanban
+    name: Active
+    filters:
+      and:
+        - archive != true
+    order:
+      - formula.Name
+      - formula.priority
+      - epics
+    titleProperty: formula.Name
+    columnProperty: formula.status
+    columns:
+      - Backlog
+      - Planning
+      - In Progress
+      - Done
+    columnColors:
+      - "Planning = #00b3ff"
+      - "In Progress = #fed401"
+      - "Done = #06c650"
+    columnColorMode: subtle
+    showEmpty: false
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
   - type: generic-kanban
     name: Current Sprint
     filters:
       and:
-        - sprints.filter(value.asFile().name.endsWith("- Current")).length > 0
+        - sprints.filter(date(value.asFile().properties.start) <= today() && date(value.asFile().properties.end) >= today()).length > 0
         - archive != true
     order:
-      - file.name
+      - formula.Name
+      - formula.priority
       - epics
+    titleProperty: formula.Name
     columnProperty: formula.status
     columns:
       - Backlog
@@ -45,34 +78,46 @@ views:
     showEmpty: false
     quickFilterProperties:
       - note.epics
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
   - type: generic-kanban
-    name: Active
+    name: Sprint Organization
     filters:
       and:
         - archive != true
     order:
-      - file.name
+      - formula.Name
+      - formula.priority
       - epics
-    columnProperty: formula.status
+      - formula.SprintOrg
+    titleProperty: formula.Name
+    columnProperty: formula.SprintOrg
     columns:
       - Backlog
-      - Planning
-      - In Progress
-      - Done
+      - Current
+      - Future
+      - Past
     columnColors:
-      - "Planning = #00b3ff"
-      - "In Progress = #fed401"
-      - "Done = #06c650"
+      - "Current = #00a832"
+      - "Future = #005799"
+      - "Past = #990000"
     columnColorMode: subtle
-    showEmpty: false
+    showEmpty: true
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
   - type: generic-kanban
     name: Related
     filters:
-      and:
+      or:
         - list(epics).contains(this)
+        - list(sprints).contains(this)
     order:
-      - file.name
+      - formula.Name
+      - formula.priority
       - epics
+    titleProperty: formula.Name
     columnProperty: formula.status
     columns:
       - Backlog
@@ -85,13 +130,25 @@ views:
       - "Done = #06c650"
     columnColorMode: subtle
     showEmpty: false
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
   - type: table
     name: All
+    groupBy:
+      property: formula.SprintOrg
+      direction: ASC
     order:
-      - file.name
-      - status
+      - formula.Name
+      - formula.priority
       - formula.status
       - formula.tasks
-    sort: []
+      - sprints
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
+      - property: formula.status
+        direction: ASC
     columnSize:
-      file.name: 408
+      formula.Name: 408
+      formula.tasks: 609

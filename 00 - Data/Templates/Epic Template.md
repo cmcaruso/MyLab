@@ -1,6 +1,10 @@
+<%* const name = await tp.user.new_entity(tp, "EPC") -%>
 ---
 type:
   - "[[Epics]]"
+name: <% JSON.stringify(name) %>
+aliases:
+  - <% JSON.stringify(name) %>
 projects:
 archive: false
 cssclasses:
@@ -9,5 +13,5 @@ cssclasses:
   - hidden-css
 ---
 
-## Epics
-![[Epics.base#Related]]
+## Stories
+![[Stories.base#Related]]

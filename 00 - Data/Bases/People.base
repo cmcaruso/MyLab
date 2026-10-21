@@ -1,7 +1,9 @@
 filters:
   and:
     - type.contains(link("People"))
-    - '!file.name.contains("Template")'
+    - file.folder == "00 - Data/People"
+formulas:
+  Name: file.asLink(if(name, name, file.name))
 views:
   - type: cards
     name: Cards
@@ -11,8 +13,14 @@ views:
     groupBy:
       property: org
       direction: ASC
+    groupOrder:
+      - - "[[ORG-0002|Greenvale University]]"
+      - - "[[ORG-0003|St. Aurelian Hospital]]"
+      - - "[[ORG-0005|Nordhaven University]]"
+      - - "[[ORG-0004|Nimbus Diagnostics]]"
+      - - "[[ORG-0001|UCBM]]"
     order:
-      - file.name
+      - formula.Name
     sort:
       - property: title
         direction: ASC
@@ -24,7 +32,7 @@ views:
       and:
         - archive != true
     order:
-      - file.name
+      - formula.Name
       - title
       - role
       - org
@@ -37,7 +45,7 @@ views:
     name: All
     order:
       - archive
-      - file.name
+      - formula.Name
       - title
       - role
       - org
@@ -47,7 +55,7 @@ views:
       - orcID
       - image
     sort:
-      - property: file.name
+      - property: name
         direction: ASC
     rowHeight: medium
   - type: cards

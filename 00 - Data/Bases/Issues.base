@@ -1,11 +1,55 @@
 filters:
-  and:
+  or:
     - type.contains(link("Issues"))
+    - file.folder == "00 - Data/Issues"
+formulas:
+  Name: file.asLink(if(name, name, file.name))
 views:
   - type: table
     name: All
+    order:
+      - formula.Name
+      - blocking
+      - status
+      - affects
   - type: table
     name: Active
     filters:
       and:
         - archive != true
+    order:
+      - formula.Name
+      - blocking
+      - status
+      - affects
+    sort: []
+  - type: table
+    name: Blocking
+    filters:
+      and:
+        - blocking == true
+        - status != "Resolved"
+        - archive != true
+    order:
+      - formula.Name
+      - status
+      - affects
+  - type: table
+    name: Non-blocking
+    filters:
+      and:
+        - blocking != true
+        - archive != true
+    order:
+      - formula.Name
+      - status
+      - affects
+  - type: table
+    name: Related
+    filters:
+      and:
+        - list(affects).contains(this)
+    order:
+      - formula.Name
+      - blocking
+      - status

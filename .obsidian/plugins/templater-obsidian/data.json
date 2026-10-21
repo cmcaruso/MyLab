@@ -1,0 +1,79 @@
+{
+  "data_version": 2,
+  "command_timeout": 5,
+  "templates_folder": "00 - Data/Templates",
+  "templates_pairs": [],
+  "trigger_on_file_creation_mode": "folder",
+  "auto_jump_to_cursor": false,
+  "jump_to_cursor_after_file_name": false,
+  "shell_path": "",
+  "user_scripts_folder": "00 - Data/Templates/Scripts",
+  "folder_templates": [
+    {
+      "folder": "00 - Data/Tasks",
+      "template": "00 - Data/Templates/Tasks Template.md"
+    },
+    {
+      "folder": "00 - Data/Stories",
+      "template": "00 - Data/Templates/Stories Template.md"
+    },
+    {
+      "folder": "00 - Data/Epics",
+      "template": "00 - Data/Templates/Epic Template.md"
+    },
+    {
+      "folder": "00 - Data/Projects",
+      "template": "00 - Data/Templates/Project Template.md"
+    },
+    {
+      "folder": "00 - Data/Responsibilities",
+      "template": "00 - Data/Templates/Responsibilities Template.md"
+    },
+    {
+      "folder": "00 - Data/Issues",
+      "template": "00 - Data/Templates/Issue Template.md"
+    },
+    {
+      "folder": "00 - Data/Meetings",
+      "template": "00 - Data/Templates/Meeting Template.md"
+    },
+    {
+      "folder": "00 - Data/Sprints",
+      "template": "00 - Data/Templates/Sprint Template.md"
+    },
+    {
+      "folder": "00 - Data/References",
+      "template": "00 - Data/Templates/Reference Template.md"
+    },
+    {
+      "folder": "00 - Data/People",
+      "template": "00 - Data/Templates/People Template.md"
+    },
+    {
+      "folder": "00 - Data/Organizations",
+      "template": "00 - Data/Templates/Organization Template.md"
+    },
+    {
+      "folder": "00 - Data/Notes",
+      "template": "00 - Data/Templates/Note Template.md"
+    },
+    {
+      "folder": "00 - Data/Sessions",
+      "template": "00 - Data/Templates/Session Template.md"
+    }
+  ],
+  "file_templates": [],
+  "syntax_highlighting": true,
+  "syntax_highlighting_mobile": false,
+  "enabled_templates_hotkeys": [],
+  "startup_templates": [],
+  "intellisense_render": "1",
+  "ignore_folders_on_creation": [
+    {
+      "folder": "99 - Agents"
+    },
+    {
+      "folder": "00 - Data/Plans"
+    }
+  ]
+}

@@ -1,5 +1,11 @@
 [
   "banners",
-  "omnisearch",
-  "generic-kanban-view"
+  "generic-kanban-view",
+  "file-titles",
+  "property-styles",
+  "nested-properties",
+  "list-groups",
+  "calendar",
+  "templater-obsidian",
+  "omnisearch"
 ]

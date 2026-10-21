@@ -1,26 +1,97 @@
 filters:
-  and:
+  or:
     - type.contains(link("Tasks"))
+    - file.folder == "00 - Data/Tasks"
+formulas:
+  Name: file.asLink(if(name, name, file.name))
+  PriorityRank: if(priority == "Urgent", 0, if(priority == "High", 1, if(priority == "Medium", 2, if(priority == "Low", 3, 4))))
 views:
   - type: generic-kanban
-    name: Current Sprint
+    name: Active
     filters:
       and:
-        - stories.filter(value.asFile().properties.sprints.filter(value.asFile().name.endsWith("- Current"))).length > 0
         - archive != true
     order:
-      - file.name
-      - status
+      - formula.Name
       - assignees
+      - priority
       - scheduled
-    sort: []
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
+      - property: scheduled
+        direction: ASC
     columnProperty: note.status
     columns:
       - Backlog
       - Planning
       - In Progress
       - Done
-    titleProperty: file.name
+    titleProperty: formula.Name
+    columnColors:
+      - "Planning = #00b3ff"
+      - "In Progress = #fed401"
+      - "Done = #06c650"
+    columnColorMode: subtle
+    showEmpty: false
+    quickFilterProperties:
+      - note.assignees
+      - note.stories
+  - type: generic-kanban
+    name: By Priority
+    filters:
+      and:
+        - archive != true
+        - status != "Done"
+    order:
+      - formula.Name
+      - status
+      - assignees
+      - scheduled
+    sort:
+      - property: scheduled
+        direction: ASC
+    columnProperty: note.priority
+    columns:
+      - Low
+      - Medium
+      - High
+      - Urgent
+    titleProperty: formula.Name
+    columnColors:
+      - "Low = #00b3ff"
+      - "Medium = #fed401"
+      - "High = #f76b15"
+      - "Urgent = #e5484d"
+    columnColorMode: subtle
+    showEmpty: false
+    quickFilterProperties:
+      - note.assignees
+      - note.stories
+  - type: generic-kanban
+    name: Current Sprint
+    filters:
+      and:
+        - stories.filter(value.asFile().properties.sprints.filter(date(value.asFile().properties.start) <= today() && date(value.asFile().properties.end) >= today()).length > 0).length > 0
+        - archive != true
+    order:
+      - formula.Name
+      - priority
+      - status
+      - assignees
+      - scheduled
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
+      - property: scheduled
+        direction: ASC
+    columnProperty: note.status
+    columns:
+      - Backlog
+      - Planning
+      - In Progress
+      - Done
+    titleProperty: formula.Name
     columnColors:
       - "Planning = #00b3ff"
       - "In Progress = #fed401"
@@ -33,22 +104,48 @@ views:
   - type: table
     name: All
     order:
-      - file.name
+      - formula.Name
+      - priority
       - status
       - stories
-    sort: []
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
+      - property: scheduled
+        direction: ASC
     columnSize:
-      file.name: 245
+      formula.Name: 245
       note.stories: 472
     rowHeight: medium
-  - type: cards
+  - type: generic-kanban
     name: Related
     filters:
       and:
         - list(stories).contains(this)
-    groupBy:
-      property: status
-      direction: ASC
     order:
-      - file.name
+      - formula.Name
+      - priority
       - status
+      - assignees
+      - scheduled
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
+      - property: scheduled
+        direction: ASC
+    columnProperty: note.status
+    columns:
+      - Backlog
+      - Planning
+      - In Progress
+      - Done
+    titleProperty: formula.Name
+    columnColors:
+      - "Planning = #00b3ff"
+      - "In Progress = #fed401"
+      - "Done = #06c650"
+    columnColorMode: subtle
+    showEmpty: false
+    quickFilterProperties:
+      - note.assignees
+      - note.stories

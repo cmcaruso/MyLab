@@ -1,6 +1,10 @@
 filters:
-  and:
+  or:
     - type.contains(link("Projects"))
+    - file.folder == "00 - Data/Projects"
+formulas:
+  Name: file.asLink(if(name, name, file.name))
+  PriorityRank: if(priority == "Urgent", 0, if(priority == "High", 1, if(priority == "Medium", 2, if(priority == "Low", 3, 4))))
 views:
   - type: generic-kanban
     name: Active
@@ -11,10 +15,12 @@ views:
       property: status
       direction: ASC
     order:
-      - file.name
+      - formula.Name
+      - priority
       - org
       - activities
       - tags
+    titleProperty: formula.Name
     markers: bullet
     cardSize: 220
     columnProperty: note.status
@@ -22,15 +28,22 @@ views:
       - Backlog
       - Proposal
       - Ongoing
+      - Funded
+      - Under Review
       - Closed
     columnColors:
       - "Proposal = #00b3ff"
       - "Ongoing = #fed401"
+      - "Funded = #d17a00"
+      - "Under Review = #7e00c2"
       - "Closed = #06c650"
     columnColorMode: subtle
     showEmpty: false
     quickFilterProperties:
       - note.activities
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
   - type: generic-kanban
     name: Related
     filters:
@@ -40,10 +53,12 @@ views:
       property: status
       direction: ASC
     order:
-      - file.name
+      - formula.Name
+      - priority
       - org
       - activities
       - tags
+    titleProperty: formula.Name
     markers: bullet
     cardSize: 220
     columnProperty: note.status
@@ -60,13 +75,19 @@ views:
     showEmpty: false
     quickFilterProperties:
       - note.activities
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
   - type: table
     name: All
     order:
       - archive
-      - file.name
+      - formula.Name
+      - priority
       - categories
       - status
       - org
       - tags
-    sort: []
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC

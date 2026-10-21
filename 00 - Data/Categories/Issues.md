@@ -2,3 +2,5 @@
 type:
   - "[[Categories]]"
 ---
+
+![[Issues.base]]

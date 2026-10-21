@@ -1,9 +1,11 @@
 filters:
-  and:
+  or:
     - type.contains(link("Missions"))
+    - file.folder == "00 - Data/Missions"
 formulas:
-  Responsibilities: file.backlinks.filter(value.asFile().properties.type.contains( "Responsibilities"))
-  Projects: file.backlinks.filter(value.asFile().properties.type.contains("Responsibilities")).map(value.asFile().backlinks).flat().filter(value.asFile().properties.type.contains("Projects"))
+  Name: file.asLink(if(name, name, file.name))
+  Responsibilities: file.backlinks.filter(value.asFile().properties.type.contains( "Responsibilities")).map(value.asFile().asLink(if(value.asFile().properties.name, value.asFile().properties.name, value.asFile().name)))
+  Projects: file.backlinks.filter(value.asFile().properties.type.contains("Responsibilities")).map(value.asFile().backlinks).flat().filter(value.asFile().properties.type.contains("Projects")).map(value.asFile().asLink(if(value.asFile().properties.name, value.asFile().properties.name, value.asFile().name)))
   Current Projects: formula.Projects.filter(value.asFile().properties.archive != true)
   active: if(!formula["Current Projects"].isEmpty(), "Active Projects", "Not Active Projects")
 properties:
@@ -15,9 +17,10 @@ properties:
     displayName: projects
 views:
   - type: generic-kanban
+    titleProperty: formula.Name
     name: Active
     order:
-      - file.name
+      - formula.Name
       - formula.Responsibilities
       - formula.Current Projects
     columnProperty: formula.active
@@ -30,14 +33,14 @@ views:
   - type: table
     name: All
     order:
-      - file.name
+      - formula.Name
       - formula.Responsibilities
       - formula.Current Projects
       - formula.Projects
       - formula.active
     sort: []
     columnSize:
-      file.name: 130
+      formula.Name: 130
       formula.Responsibilities: 283
       formula.Current Projects: 377
     rowHeight: medium

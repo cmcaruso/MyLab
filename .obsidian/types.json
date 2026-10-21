@@ -20,6 +20,8 @@
     "sprints": "multitext",
     "assignees": "multitext",
     "start": "datetime",
-    "scheduled": "datetime"
+    "scheduled": "datetime",
+    "affects": "multitext",
+    "end": "date"
   }
 }

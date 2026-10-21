@@ -1,12 +1,18 @@
 filters:
   and:
     - type.contains(link("Epics"))
+    - file.folder == "00 - Data/Epics"
 formulas:
-  stories: file.backlinks.filter(value.asFile().properties.type.contains("Stories"))
+  Name: file.asLink(if(name, name, file.name))
+  PriorityPool: if(formula.tasks.filter(value.asFile().properties.status != "Done").isEmpty(), formula.tasks, formula.tasks.filter(value.asFile().properties.status != "Done"))
+  priority: if(formula.PriorityPool.filter(value.asFile().properties.priority == "Urgent").length > 0, "Urgent", if(formula.PriorityPool.filter(value.asFile().properties.priority == "High").length > 0, "High", if(formula.PriorityPool.filter(value.asFile().properties.priority == "Medium").length > 0, "Medium", if(formula.PriorityPool.filter(value.asFile().properties.priority == "Low").length > 0, "Low", ""))))
+  PriorityRank: if(formula.priority == "Urgent", 0, if(formula.priority == "High", 1, if(formula.priority == "Medium", 2, if(formula.priority == "Low", 3, 4))))
+  stories: file.backlinks.filter(value.asFile().properties.type.contains("Stories")).map(value.asFile().asLink(if(value.asFile().properties.name, value.asFile().properties.name, value.asFile().name)))
   status: if(formula.tasks.isEmpty(), "Backlog", if(formula.tasks.filter(value.asFile().properties.status == "Done").length == formula.tasks.length, "Done", if(formula.tasks.filter(value.asFile().properties.status == "Planning").length == formula.tasks.length, "Planning", if(formula.tasks.filter(value.asFile().properties.status == "Backlog").length == formula.tasks.length, "Backlog", "In Progress"))))
-  tasks: formula.stories.map(value.asFile().backlinks.filter(value.asFile().properties.type.contains("Tasks"))).flat().unique()
+  tasks: formula.stories.map(value.asFile().backlinks.filter(value.asFile().properties.type.contains("Tasks"))).flat().unique().map(value.asFile().asLink(if(value.asFile().properties.name, value.asFile().properties.name, value.asFile().name)))
 views:
   - type: generic-kanban
+    titleProperty: formula.Name
     name: Active
     filters:
       and:
@@ -15,7 +21,8 @@ views:
       property: status
       direction: ASC
     order:
-      - file.name
+      - formula.Name
+      - formula.priority
       - projects
     cardSize: 200
     columnProperty: formula.status
@@ -32,7 +39,11 @@ views:
     showEmpty: false
     quickFilterProperties:
       - note.projects
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
   - type: generic-kanban
+    titleProperty: formula.Name
     name: Related
     filters:
       and:
@@ -41,7 +52,8 @@ views:
       property: status
       direction: ASC
     order:
-      - file.name
+      - formula.Name
+      - formula.priority
       - projects
     cardSize: 200
     columnProperty: formula.status
@@ -56,15 +68,26 @@ views:
       - "Done = #06c650"
     columnColorMode: subtle
     showEmpty: false
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
   - type: table
     name: All
+    groupBy:
+      property: projects
+      direction: ASC
     order:
       - archive
-      - file.name
+      - formula.Name
+      - formula.priority
       - projects
       - formula.status
       - formula.stories
       - formula.tasks
-    sort: []
+    sort:
+      - property: formula.PriorityRank
+        direction: ASC
+      - property: formula.status
+        direction: ASC
     columnSize:
       formula.tasks: 280

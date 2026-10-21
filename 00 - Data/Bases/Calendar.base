@@ -1,20 +1,28 @@
 filters:
   or:
-    - type.containsAny(link("Meetings"))
+    - type.containsAny(link("Meetings"), link("Events"))
     - and:
         - type.containsAny(link("Tasks"))
         - or:
             - "!start.isEmpty()"
-    - and:
-        - type.contains(link("Events"))
 formulas:
+  Name: file.asLink(if(name, name, file.name))
   end: if(end.isEmpty(), start + duration, end)
   duration: if(duration.isEmpty(), end - start, duration)
 views:
+  - type: calendar
+    name: Calendar
+    mode: auto
+    rows: true
+    hideNoted: false
+  - type: calendar
+    name: Today
+    mode: agenda
+    date: this.file.name
   - type: cards
     name: Cards
     order:
-      - file.name
+      - formula.Name
       - type
       - start
       - formula.duration
@@ -23,13 +31,13 @@ views:
       - property: start
         direction: DESC
     columnSize:
-      file.name: 204
+      formula.Name: 204
       note.start: 176
       formula.end: 161
   - type: table
     name: All
     order:
-      - file.name
+      - formula.Name
       - start
       - duration
       - formula.end
@@ -39,10 +47,10 @@ views:
         direction: ASC
       - property: start
         direction: ASC
-      - property: file.name
+      - property: name
         direction: ASC
     columnSize:
-      file.name: 204
+      formula.Name: 204
       note.start: 176
       formula.end: 161
   - type: cards
@@ -51,7 +59,7 @@ views:
       and:
         - file.hasLink(this)
     order:
-      - file.name
+      - formula.Name
       - start
       - duration
       - formula.end
@@ -60,6 +68,6 @@ views:
       - property: start
         direction: DESC
     columnSize:
-      file.name: 204
+      formula.Name: 204
       note.start: 176
       formula.end: 161

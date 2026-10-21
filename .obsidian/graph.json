@@ -62,6 +62,41 @@
         "a": 1,
         "rgb": 14810957
       }
+    },
+    {
+      "query": "path:CLAUDE.md",
+      "color": {
+        "a": 1,
+        "rgb": 9699328
+      }
+    },
+    {
+      "query": "path:CODEX.md",
+      "color": {
+        "a": 1,
+        "rgb": 9699328
+      }
+    },
+    {
+      "query": "[\"type\":Session]",
+      "color": {
+        "a": 1,
+        "rgb": 5701805
+      }
+    },
+    {
+      "query": "[\"type\":Plan]",
+      "color": {
+        "a": 1,
+        "rgb": 5701805
+      }
+    },
+    {
+      "query": "[\"type\":Session Transcripts]",
+      "color": {
+        "a": 1,
+        "rgb": 5701805
+      }
     }
   ],
   "collapse-display": true,
@@ -69,11 +104,11 @@
   "textFadeMultiplier": 0,
   "nodeSizeMultiplier": 1,
   "lineSizeMultiplier": 1,
-  "collapse-forces": true,
+  "collapse-forces": false,
   "centerStrength": 0.518713248970312,
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 0.28590726390906945,
+  "scale": 0.2827866841532991,
   "close": true
 }

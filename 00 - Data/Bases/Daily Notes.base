@@ -16,3 +16,4 @@ views:
     name: Related
     order:
       - file.name
+      - formula.sprints

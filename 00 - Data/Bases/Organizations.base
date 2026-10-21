@@ -1,18 +1,25 @@
 filters:
   and:
     - type.contains(link("Organizations"))
-    - '!file.name.contains("Template")'
+    - file.folder == "00 - Data/Organizations"
+formulas:
+  Name: file.asLink(if(name, name, file.name))
 views:
   - type: cards
     name: Cards
+    order:
+      - name
+    sort:
+      - property: formula.Name
+        direction: ASC
     image: note.logo
     cardSize: 180
     imageFit: contain
   - type: table
     name: All
     order:
-      - file.name
+      - formula.Name
       - address
     columnSize:
-      file.name: 184
+      formula.Name: 184
       note.address: 370

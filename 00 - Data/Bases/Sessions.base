@@ -1,0 +1,34 @@
+filters:
+  or:
+    - type.contains(link("Sessions"))
+    - file.folder == "00 - Data/Sessions"
+formulas:
+  Name: file.asLink(if(name, name, file.name))
+views:
+  - type: table
+    name: All
+    order:
+      - formula.Name
+      - start
+      - end
+      - agent
+      - model
+      - topics
+      - plans
+      - transcript
+      - touched
+    sort:
+      - property: start
+        direction: DESC
+  - type: table
+    name: Related
+    filters:
+      and:
+        - list(touched).contains(this)
+    order:
+      - formula.Name
+      - start
+      - topics
+    sort:
+      - property: start
+        direction: DESC

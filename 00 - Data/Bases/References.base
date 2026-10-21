@@ -1,6 +1,27 @@
 filters:
-  and:
+  or:
     - type.contains(link("References"))
+    - file.folder == "00 - Data/References"
+formulas:
+  Name: file.asLink(name)
+  Kind: list(type).filter(!value.toString().contains("References"))
 views:
+  - type: cards
+    name: View
+    groupBy:
+      property: formula.Kind
+      direction: ASC
+    order:
+      - formula.Name
+      - year
+    sort:
+      - property: year
+        direction: DESC
   - type: table
     name: Table
+    order:
+      - formula.Name
+      - formula.Kind
+    sort: []
+    columnSize:
+      formula.Name: 142

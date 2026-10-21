@@ -1,9 +1,24 @@
 # Obsidian per-device UI state
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
+.obsidian/bookmarks.json
 
-# Third-party plugins users install themselves (see README)
+# Third-party plugins users install themselves (see README).
+# Templater's settings are kept: they wire the folder templates.
 .obsidian/plugins/omnisearch/
+.obsidian/plugins/obsidian-git/
+.obsidian/plugins/templater-obsidian/*
+!.obsidian/plugins/templater-obsidian/data.json
+
+# Calendar plugin: per-vault settings (feed labels) and its event cache
+.obsidian/plugins/calendar/data.json
+99 - Agents/agents/cache/
+
+# Raw agent transcripts: large, kept out of git (the readable .md export is committed)
+99 - Agents/agents/transcripts/*.jsonl
+
+# Python bytecode from running the agent scripts
+__pycache__/
 
 # iCloud Drive artefacts
 * [0-9].json

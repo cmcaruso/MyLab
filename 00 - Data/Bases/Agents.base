@@ -1,0 +1,71 @@
+filters:
+  or:
+    - type.contains(link("Sessions"))
+    - type.contains(link("Plans"))
+formulas:
+  Name: file.asLink(if(name, name, file.name))
+  Kind: if(type.contains(link("Sessions")), "Session", "Plan")
+  Session: if(formula.Kind == "Session", file, list(session)[0].asFile())
+  Date: if(formula.Kind == "Session", start, date(formula.Session.properties.start))
+  Agent: if(formula.Kind == "Session", agent, formula.Session.properties.agent)
+  Model: if(formula.Kind == "Session", model, formula.Session.properties.model)
+  Touched: if(formula.Kind == "Session", list(touched), list(formula.Session.properties.touched))
+  Tasks: formula.Touched.filter(value.asFile().properties.type.contains("Tasks")).map(value.asFile().asLink(if(value.asFile().properties.name, value.asFile().properties.name, value.asFile().name)))
+  Projects: formula.Touched.map(value.asFile()).map(if(value.properties.type.contains("Projects"), [value], if(value.properties.type.contains("Epics"), list(value.properties.projects).map(value.asFile()), if(value.properties.type.contains("Stories"), list(value.properties.epics).map(list(value.asFile().properties.projects).map(value.asFile())).flat(), if(value.properties.type.contains("Tasks"), list(value.properties.stories).map(list(value.asFile().properties.epics).map(list(value.asFile().properties.projects).map(value.asFile())).flat()).flat(), []))))).flat().map(value.asLink(if(value.properties.name, value.properties.name, value.name))).unique()
+views:
+  - type: table
+    name: Timeline
+    order:
+      - formula.Date
+      - formula.Kind
+      - formula.Name
+      - formula.Agent
+      - formula.Model
+      - formula.Tasks
+      - formula.Projects
+      - topics
+    sort:
+      - property: formula.Date
+        direction: DESC
+      - property: formula.Projects
+        direction: ASC
+    columnSize:
+      formula.Date: 163
+      formula.Kind: 90
+      formula.Name: 320
+      formula.Tasks: 262
+      formula.Projects: 185
+    rowHeight: medium
+  - type: table
+    name: Sessions
+    filters:
+      and:
+        - formula.Kind == "Session"
+    order:
+      - formula.Date
+      - formula.Name
+      - formula.Agent
+      - formula.Model
+      - plans
+      - formula.Tasks
+      - formula.Projects
+      - topics
+      - end
+    sort:
+      - property: formula.Date
+        direction: DESC
+  - type: table
+    name: Plans
+    filters:
+      and:
+        - formula.Kind == "Plan"
+    order:
+      - formula.Date
+      - formula.Name
+      - status
+      - session
+      - formula.Tasks
+      - formula.Projects
+    sort:
+      - property: formula.Date
+        direction: DESC

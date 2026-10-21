@@ -1,0 +1,17 @@
+filters:
+  or:
+    - type.contains(link("Plans"))
+    - file.folder == "00 - Data/Plans"
+formulas:
+  Name: file.asLink(if(name, name, file.name))
+views:
+  - type: table
+    name: All
+    order:
+      - formula.Name
+      - status
+      - session
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC

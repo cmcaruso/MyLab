@@ -1,0 +1,25 @@
+filters:
+  or:
+    - type.contains(link("Notes"))
+    - file.folder == "00 - Data/Notes"
+formulas:
+  Name: file.asLink(if(name, name, file.name))
+views:
+  - type: table
+    name: All
+    order:
+      - formula.Name
+      - related to
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC
+    columnSize:
+      formula.Name: 348
+  - type: table
+    name: Related
+    filters:
+      and:
+        - list(note["related to"]).contains(this)
+    order:
+      - formula.Name
