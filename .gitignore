@@ -26,3 +26,6 @@ __pycache__/
 
 # macOS
 *.DS_Store
+
+# Claude Code machine-local settings
+.claude/settings.local.json

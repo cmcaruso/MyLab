@@ -1,0 +1,58 @@
+# Project-local Codex permissions for the MyLab vault.
+# AGENTS.md remains the policy source of truth; this config adds local guardrails.
+approval_policy = "on-request"
+approvals_reviewer = "user"
+default_permissions = "mylab-vault"
+
+[permissions.mylab-vault]
+description = "Read the vault; write only the free-edit folders. Ask before other local writes."
+
+[permissions.mylab-vault.filesystem]
+":root" = "read"
+":tmpdir" = "write"
+":slash_tmp" = "write"
+
+[permissions.mylab-vault.filesystem.":workspace_roots"]
+"." = "read"
+"00 - Data/Daily Notes" = "write"
+"00 - Data/Notes" = "write"
+"00 - Data/Meetings" = "write"
+"00 - Data/Tasks" = "write"
+"00 - Data/Stories" = "write"
+"00 - Data/Issues" = "write"
+"00 - Data/Sprints" = "write"
+"00 - Data/References" = "write"
+"00 - Data/Sessions" = "write"
+"00 - Data/Plans" = "write"
+"99 - Agents/agents/examples" = "write"
+"99 - Agents/agents/memory" = "write"
+"99 - Agents/agents/transcripts" = "write"
+".git" = "read"
+".codex" = "read"
+
+[permissions.mylab-vault.network]
+enabled = false
+
+[apps._default]
+default_tools_approval_mode = "prompt"
+approvals_reviewer = "user"
+
+[features]
+hooks = true
+
+[[hooks.PreToolUse]]
+matcher = "^Bash$"
+
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = 'python3 "99 - Agents/codex/hooks/vault_hooks.py" pre-tool-use'
+timeout = 10
+statusMessage = "Checking MyLab Git restrictions"
+
+[[hooks.SessionEnd]]
+
+[[hooks.SessionEnd.hooks]]
+type = "command"
+command = 'python3 "99 - Agents/codex/hooks/vault_hooks.py" session-end'
+timeout = 60
+statusMessage = "Exporting MyLab session transcript"
