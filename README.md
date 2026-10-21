@@ -1,286 +1,296 @@
 # MyLab
 
-**An Obsidian vault for organizing academic work.**
+**An Obsidian vault for organizing academic work, built to be shared with AI agents.**
 
-MyLab models academic life as a single connected chain — from the broad *missions* of an
-academic role down to the individual task you close this afternoon:
+MyLab models academic life as one connected chain. It runs from the broad *missions* of an academic role down to the task you close this afternoon:
 
 > **Missions → Responsibilities → Projects → Epics → Stories → Tasks**
 
-Around that spine sit the people, organizations, sprints, meetings and daily notes that the
-work actually happens with. Everything is plain Markdown with YAML frontmatter. There is no
-database, no external service, and no script to run: the vault uses Obsidian's native
-**Bases** feature to turn frontmatter links into live tables, card galleries and Kanban
-boards, and it derives progress automatically — close a Task and its Story, Epic and Mission
-all update themselves.
+Around that spine sit the issues, events, references, ideas, people and organizations that the work involves. Everything is plain Markdown with YAML frontmatter. Obsidian's native **Bases** turn the frontmatter links into live tables, card galleries, calendars and Kanban boards. Progress is derived automatically: close a Task and its Story, Epic and Mission update themselves.
+
+On top of that sits an **agent layer**. Claude Code, Codex or a local model can file notes for you (`/capture`, `/paper`), following written rules, with a small local model as a second opinion, and leave a session note and a transcript behind.
+
+The vault ships with a **fictional example lab** that shows every part in use: Prof. Lena Ferraro's AI in Medicine Lab at Greenvale University. Every person and organization in it is invented, except the author's own note and UCBM.
 
 ---
 
-## ⚠️ Status: work in progress
+## Contents
 
-This vault is used daily, but it is not finished. Several layers are **scaffolded but not yet
-wired up** — dashboards and Bases exist for them, while the categories, folders and templates
-that would feed them do not. Those parts will render as empty rather than break anything.
-See [Known gaps](#known-gaps) for the honest list before you rely on something.
+- [The model](#the-model)
+- [How it works](#how-it-works)
+- [Tour of the example lab](#tour-of-the-example-lab)
+- [Installation](#installation)
+- [Daily use](#daily-use)
+- [Working with AI agents](#working-with-ai-agents)
+- [Reference](#reference)
+- [Customization](#customization)
+- [Known gaps](#known-gaps)
+- [Credits and license](#credits-and-license)
 
 ---
+
 ## The model
 
-Each level is an ordinary note that points **upward** to its parent through a frontmatter
-property. Nothing points downward — the child-to-parent links are enough, because Bases
-reconstructs the reverse direction from backlinks.
+Each level is an ordinary note that points **upward** to its parent through a frontmatter property. Nothing points downward: Bases rebuilds the reverse direction from backlinks.
 
 ```mermaid
 flowchart BT
-  T["✅ Tasks"] -->|stories| S["📖 Stories"]
-  S -->|epics| E["🚩 Epics"]
-  E -->|projects| P["📁 Projects"]
+  T["✅ Tasks"] -->|stories| S["📰 Stories"]
+  S -->|epics| E["🗺️ Epics"]
+  E -->|projects| P["🚀 Projects"]
   P -->|activities| R["📋 Responsibilities"]
-  R -->|missions| M["🎯 Missions"]
+  R -->|missions| M["⚓️ Missions"]
 
-  S -.->|sprints| SP["📅 Sprints"]
+  I["🪲 Issues"] -.->|affects| T
+  I -.->|affects| S
+  S -.->|sprints| SP["🏃 Sprints"]
   T -.->|assignees| PE["👤 People"]
   P -.->|org| O["🏢 Organizations"]
   PE -.->|org| O
+  EV["📆 Events / Meetings"] -.->|related to| P
 ```
 
-| Level | Folder | Points up via | Status |
+| Level | What it is | Points up via | Status |
 |---|---|---|---|
-| **Missions** | `Missions/` | — (top of the chain) | derived: `Active Projects` / `Not Active Projects` |
-| **Responsibilities** | `Responsibilities/` | `missions:` | derived, same two values |
-| **Projects** | `Projects/` | `activities:` → Responsibilities, `org:` → Organizations | **you set it**: Backlog · Proposal · Ongoing · Closed |
-| **Epics** | `Epics/` | `projects:` | derived from the Epic's Stories' Tasks |
-| **Stories** | `Stories/` | `epics:`, `sprints:` | derived from the Story's Tasks |
-| **Tasks** | `Tasks/` | `stories:`, `assignees:` | **you set it**: Backlog · Planning · In Progress · Done |
+| **Mission** | A permanent mission of the academic role: Teaching, Research, Third Mission, Mentoring | n/a (top of the chain) | derived: *Active Projects* / *Not Active Projects* |
+| **Responsibility** | An ongoing area of accountability, never "done" (PhD Supervision, Funding Acquisition, …) | `missions` | derived, same two values |
+| **Project** | A bounded endeavour with its own identity: a grant, a course, a PhD student, a thesis | `activities`, `org` | **you set it**: Proposal · Under Review · Funded · Ongoing · Closed |
+| **Epic** | The largest container of work inside a Project (a work package, a yearly cycle) | `projects` | derived from its Stories' Tasks |
+| **Story** | A complete, concrete result usable on its own: a paper written, lessons prepared | `epics`, `sprints` | derived from its Tasks |
+| **Task** | A concrete but partial step toward a Story. One Task may serve several Stories | `stories`, `assignees` | **you set it**: Backlog · Planning · In Progress · Done |
 
-The four missions shipped with the vault reflect a typical academic mandate — **Teaching**,
-**Research**, **Third Mission**, **Mentoring** — and the eight responsibilities beneath them
-(Teaching in Class, Research, Dissemination, Funding Acquisition, PhD Supervision, Thesis
-Supervision, Project Management, Technology Transfer) map onto them many-to-many. A single
-responsibility can serve several missions: *PhD Supervision* counts toward Teaching, Research
-**and** Mentoring at once.
+Supporting notes:
 
-Supporting entities: **Organizations**, **People**, **Sprints**, **Meetings**, **Daily
-Notes**, and (scaffolded only) **Issues** and **References**.
+| Type | What it is |
+|---|---|
+| **Issue** | A problem or limitation, attached only to the Task or Story it `affects`. `blocking: true` means it stops current work. `status: Open / Resolved`. |
+| **Event / Meeting** | Anything dated: a lesson, deadline, talk. A Meeting is an Event with minutes (`type: [Events, Meetings]`); its action items become Tasks. |
+| **Reference** | External knowledge you consult: a paper (`type: [References, Papers]`), a call (`[References, Grants]`), a dataset, a tool. |
+| **Note** | Your own thinking that isn't work yet: ideas, drafts, open questions. |
+| **Sprint** | A ~2-week time box. The current sprint is the one where today falls between `start` and `end`. |
+| **People / Organizations** | Who the work happens with. People link to organizations with `org`. |
+| **Daily Note** | A journal page named `YYYY-MM-DD`, with today's meetings and the sprint board. |
+| **Session / Plan / Session Transcript** | The record an AI agent leaves of a working session (see [Working with AI agents](#working-with-ai-agents)). |
+
+The full rules (definitions, a decision tree for classifying anything you jot down, naming, and worked examples) are in the **Ontology**, `00 - Data/Notes/NOT-0001.md`. It is written for humans and agents alike.
 
 ---
 
 ## How it works
 
-Three moving parts, and once you see them the whole vault becomes predictable.
-
-### 1. `type:` is what makes a note a thing
+### 1. `type:` makes a note a thing
 
 Every note declares what it is by linking to a category note:
 
 ```yaml
----
 type:
   - "[[Tasks]]"
----
 ```
 
-The category notes live in `00 - Data/Categories/`. They are near-empty on purpose: their job
-is to be a **link target** so that `type` is a real graph edge rather than a loose string.
+Category notes live in `00 - Data/Categories/`. Their job is to be a **link target**, so `type` is a real graph edge.
 
-### 2. Bases query on `type`
+### 2. Notes are named by ID, displayed by name
 
-Each `.base` file in `00 - Data/Bases/` opens with the same filter shape:
+Filenames are IDs, `<PREFIX>-<NNNN>`, with one counter per type: `TSK-0006`, `STR-0003`, `PRJ-0001`. The readable name is the `name` property, copied into `aliases` so link autocomplete finds it. Links are written `[[TSK-0006|Write the shared data loader]]`, so they stay readable in raw Markdown too.
+
+- **File Titles** (bundled) shows `name` instead of the ID in the explorer, tabs, titles, links and graph.
+- **Templater** folder templates name new notes. Create a note in `00 - Data/Tasks/`, type its title, and `Templates/Scripts/new_entity.js` puts the title in `name` and renames the file to the next free `TSK-` ID.
+
+| Prefix | Type | Prefix | Type |
+|---|---|---|---|
+| `MIS` | Missions | `ISS` | Issues |
+| `RES` | Responsibilities | `SPR` | Sprints |
+| `PRJ` | Projects | `EVT` | Events / Meetings |
+| `EPC` | Epics | `REF` | References |
+| `STR` | Stories | `PER` | People |
+| `TSK` | Tasks | `ORG` | Organizations |
+| `NOT` | Notes | `SES` | Sessions |
+
+Daily Notes (dates), Plans and Session Transcripts (tool-generated names) keep their own filenames.
+
+### 3. Bases query on `type`
+
+Each `.base` file in `00 - Data/Bases/` starts from the same filter, then defines several **views** (table, cards, Kanban, calendar), each with its own extra filters:
 
 ```yaml
 filters:
-  and:
+  or:
     - type.contains(link("Tasks"))
+    - file.folder == "00 - Data/Tasks"
 ```
 
-That single line is what collects every Task in the vault, wherever it lives. Each Base then
-defines several **views** over that set — a table, a card gallery, a Kanban board — each with
-its own extra filters. `Tasks.base`, for example, offers *Current Sprint* (Kanban), *All*
-(table) and *Related* (cards).
+### 4. Dashboards are one-line embeds
 
-### 3. Dashboards are one-line embeds
+The numbered notes at the vault root are your navigation. Each embeds one Base, e.g. `11 - Tasks.md` is just `![[Tasks.base]]` with `cssclasses: [wide, hidden-properties]`. A single view can be embedded with `![[Tasks.base#Current Sprint]]`. That is how the Daily Note shows the sprint board and a Project note shows only its own epics.
 
-The numbered notes at the vault root are deliberately thin. `11 - Tasks.md` is, in full:
+### 5. Status and priority roll up by themselves
 
-```markdown
----
-cssclasses:
-  - wide
-  - hidden-properties
----
+You set `status` only on **Tasks** and **Projects**, and `priority` only on Tasks and Projects. Everything above is computed by Bases formulas:
 
-![[Tasks.base]]
-```
+- **A Story** is *Done* when all its Tasks are done, *Backlog* or *Planning* when all of them are, and *In Progress* in every mixed case. **An Epic** applies the same rule to all Tasks under its Stories.
+- **A Story's or Epic's priority** is the highest among its open Tasks (or among all, once every one is Done).
+- **A Responsibility or Mission** is *Active* while at least one Project below it isn't archived.
 
-`cssclasses` widens the page and hides the frontmatter panel so the board fills the window.
-Views can be embedded individually with `![[Tasks.base#Current Sprint]]` — which is exactly
-how the daily note pulls in your sprint board, and how a Project note shows only *its own*
-epics.
-
-### Status rolls up by itself
-
-You only ever set a status on **Tasks** and **Projects**. Everything above is computed:
-
-- **A Story** is `Done` when all its Tasks are done, `Backlog` when all are in backlog,
-  `Planning` when all are planning, and `In Progress` in every mixed case.
-- **An Epic** applies the same rule to all Tasks reachable through its Stories.
-- **A Responsibility or Mission** counts as *Active* when at least one Project below it is not
-  archived.
-
-Because these are Bases formulas rather than stored properties, the Kanban boards built on
-them are **read-only** — you cannot drag an Epic card between columns, and that is the point:
-the only way to move an Epic forward is to actually finish its tasks. Boards built on a
-writable property (Tasks, Projects) support drag-and-drop normally.
+Boards built on derived formulas are **read-only**: the only way to move an Epic forward is to finish its tasks. Boards on a writable property (Tasks, Projects) support drag-and-drop, and a drag writes straight into the frontmatter.
 
 ---
 
-## Repository layout
+## Tour of the example lab
 
-```
-MyLab/
-├── Home.md                    # opens on launch — everything touched in the last 7 days
-├── 01 - Organizations.md      # ─┐
-├── 02 - People.md             #  │
-├── 03 - Calendar.md           #  │  Dashboards.
-├── 04 - References.md         #  │  Each one embeds a single Base view;
-├── 05 - Missions.md           #  │  this is your navigation.
-├── 06 - Responsibilities.md   #  │
-├── 07 - Projects.md           #  │
-├── 08 - Epics.md              #  │
-├── 09 - Sprints.md            #  │
-├── 10 - Stories.md            #  │
-├── 11 - Tasks.md              #  │
-├── 12 - Issues.md             #  │
-├── 13 - Notes.md              #  │  (empty — see Known gaps)
-├── 14 - Daily.md              # ─┘
-│
-├── 00 - Data/                 # all real content lives here
-│   ├── Bases/                 # the 14 .base query definitions
-│   ├── Categories/            # link targets for `type:`
-│   ├── Templates/             # note templates
-│   ├── Missions/  Responsibilities/  Projects/  Epics/  Stories/  Tasks/
-│   ├── Organizations/  People/  Sprints/
-│   └── Meetings/  Daily Notes/
-│
-└── .obsidian/
-    ├── snippets/note-classes.css
-    └── plugins/
-        ├── banners/               # bundled — MIT
-        └── generic-kanban-view/   # bundled — MIT
-```
+Open the vault and follow these, in order:
 
-`Bases/`, `Categories/` and `Templates/` are hidden from the file explorer via
-`userIgnoreFilters` in `app.json`. They are still fully editable — use the quick switcher
-(`Cmd/Ctrl+O`) to open them.
+1. **`Home`**: links to every dashboard, and the Notes list.
+2. **`07 - Projects`**: one Kanban card per status. These are:
+   - *CARDIO-FM*, a funded grant
+   - *Machine Learning per la Salute 26-27*, a course written in Italian, to show the language rule
+   - *PhD Marco Bellini* and *Thesis Aisha Karimi*
+   - *TRUST-ECG*, under review
+   - *Greenvale Seed Fund 2027*, a proposal
+   - a closed, **archived** summer school, visible only in *All*
+3. **CARDIO-FM**: its Epics (*WP1*, *Data pipeline*, *Multimodal model*), then a Story such as *Cardiac MRI preprocessing pipeline* and its Tasks.
+   - *Write the shared data loader* serves **two** Stories.
+   - *Resample MRI to a common slice thickness* is blocked by an **Issue**.
+4. **`11 - Tasks`**: *Current Sprint* (Kanban by status), *By Priority*, *All*. Try the quick filter chips (`Assignees`, `Stories`) above the board.
+5. **`10 - Stories` → Current Sprint**: derived statuses you can't drag.
+6. **`03 - Calendar`**: lessons, meetings, a deadline, and a Task with a `start`. Open **Lab meeting**: its action items link to the Tasks and the Issue they became.
+7. **`02 - People`**: cards grouped by organization. Sofia Lindqvist appears under **both** Nordhaven and Greenvale (List Groups).
+8. **`04 - References`**: four real public papers (TRIPOD+AI, PTB-XL, MIMIC-IV, Conformal Prediction) and one fictional grant call.
+9. **`15 - Agents`**: one example agent session (*File the lab meeting's action items*), with its plan and transcript. The transcript shows nimble disagreeing with the agent, and the owner deciding.
+
+> **Dates.** The example sprints run from 5 October to 15 November 2026. If *Current Sprint* is empty when you open the vault, give `SPR-0002` a `start`/`end` around today.
+
+When you're ready to make it yours: delete the example notes (or archive them), keep the Missions and Responsibilities that fit, and add yourself as a People note.
 
 ---
 
 ## Installation
 
-**Requirements:** Obsidian **1.10.0 or newer**. The bundled Kanban plugin depends on the
-Bases API introduced in that version; on older releases the boards will not render.
+**Requirements:** Obsidian **1.14.4 or newer** (List Groups patches Bases internals tested on 1.14.4; the Kanban view needs the Bases API from 1.10).
 
 1. **Clone the repo and open it as a vault.**
 
    ```bash
-   git clone https://github.com/<your-username>/MyLab.git
+   git clone https://github.com/cmcaruso/MyLab.git
    ```
 
    In Obsidian: *Open folder as vault* → select the cloned folder.
 
-2. **Trust the vault.** Obsidian will ask before running the bundled community plugins.
-   Choose *Trust author and enable plugins*.
+2. **Trust the vault.** Obsidian asks before running the bundled community plugins. Choose *Trust author and enable plugins*.
 
-3. **Verify the two bundled plugins are on.** *Settings → Community plugins* should list
-   **Banners** and **Generic Kanban View**, both enabled. They ship inside the repo, so
-   nothing needs downloading.
+3. **Install the third-party plugins** from *Settings → Community plugins → Browse*. They are not redistributed here:
+   - **Templater** (required): it names new notes by ID. Its settings (`templater-obsidian/data.json`) are already in the repo, so the folder templates work as soon as it is installed.
+   - **Omnisearch** (recommended).
+   - **Git** (optional): only if you keep your vault in git.
 
-4. **Install Omnisearch yourself.** *Settings → Community plugins → Browse → Omnisearch*.
-   It is **not** bundled here — it is third-party software and redistributing its compiled
-   code in this repo would not be appropriate. It is already listed as enabled in
-   `community-plugins.json`, so it will switch on by itself once installed.
+4. **Check the core plugins.** *Settings → Core plugins*: **Bases**, **Daily notes**, **Properties** and **Unique note creator** must be on. The core *Templates* plugin is off on purpose (Templater replaces it).
 
-   > On mobile, `app.json` binds pull-to-refresh to Omnisearch's modal. Until you install it,
-   > that gesture does nothing. Everything else works without it.
+Open `Home`. If you see the dashboard grid and a list of notes, you're set.
 
-5. **Confirm core plugins.** *Settings → Core plugins* — **Bases**, **Daily notes**,
-   **Templates**, **Properties** and **Unique note creator** must be enabled. They already are
-   in the committed config; this is just a sanity check.
+### Bundled plugins
 
-Open `Home.md`. If you see a table of recently-modified notes, you are set up.
+All written for this vault by the author, MIT-licensed, shipped as compiled builds in `.obsidian/plugins/`. Each folder has a README.
+
+| Plugin | What it does here |
+|---|---|
+| **Generic Kanban View** | Turns any Bases view into a Kanban board on a writable property or a formula |
+| **Banners** | Organization logos and banners, round portraits on People notes |
+| **File Titles** | Shows `name` instead of ID filenames everywhere |
+| **Property Styles** | Order, colours and card style of `priority` values; applies renames across notes, templates and bases |
+| **Nested Properties** | Shows nested frontmatter objects as an editable tree |
+| **List Groups** | In grouped Cards/Table views, a note with a list value appears under each item |
+| **Calendar** | Read-only Google / Microsoft 365 / ICS calendars, a calendar Bases view, EVT meeting notes on demand. Feed addresses live in your device's Keychain, never in the vault |
+
+> The Calendar plugin's id is `calendar`, the same as Liam Cain's community *Calendar*. Don't install both in the same vault.
 
 ---
 
-## Usage
-
-### Making it yours
-
-The vault ships with the author's own People and Organization notes as a worked example. To
-adopt it:
-
-1. **Keep or rewrite the Missions.** The four supplied missions suit most academic roles. Edit
-   the note names if yours differ — links update automatically (`alwaysUpdateLinks` is on).
-2. **Adjust the Responsibilities** in `00 - Data/Responsibilities/` to match what you're
-   actually accountable for, pointing each at the right missions.
-3. **Replace the example content.** Delete `People/Camillo Maria Caruso.md`,
-   `Organizations/UCBM.md`, and the `GNB26` project, epic, stories and tasks — or keep them
-   until you've seen how a filled-in hierarchy behaves, then remove them.
-4. **Add yourself.** Create your own People note (see below) and your institution.
+## Daily use
 
 ### Creating a note
 
-Every entity has a template. Create the note in the right folder, then press
-**`Cmd/Ctrl+Alt+T`** (*Insert template*) and pick the matching one.
+Create it in the right folder (`00 - Data/Tasks/`, `00 - Data/Stories/`, …) and type its name. Templater fills in the template, sets `name` and `aliases`, and renames the file to the next ID. Then fill in the parent link (`stories:`, `epics:`, …). To insert a template by hand: **`Cmd/Ctrl+Alt+T`**.
 
-**People are composed from two templates.** Start with `People Template` for the base note
-(type, email, org, image, archive), then insert **one** role add-on on top of it:
-
-- `Employee Template` → adds `title`, `role`, `org`
-- `Researcher Template` → adds `org`, `department`, `unit`, `orcID`
-
-These two are intentionally partial — they are property fragments, not standalone note types,
-which is why they carry no `type:` of their own.
+**People** start from `People Template`. Add one role fragment on top if useful: `Researcher Template` (org, department, unit, ORCID) or `Employee Template` (title, role, org). `title` holds an honorific with a sort prefix (`1 - Prof.`), not the display name.
 
 ### The daily loop
 
-Open `14 - Daily.md` or create today's daily note (`00 - Data/Daily Notes/`). The daily
-template embeds `Tasks.base#Current Sprint`, so your board is the first thing you see. Drag
-cards between **Backlog → Planning → In Progress → Done**; the drag writes `status:` straight
-into the task's frontmatter, and the Story and Epic boards recompute on the next refresh.
+Create today's Daily Note. It shows **today's meetings** (`Calendar.base#Today`) and the **current sprint board** (`Tasks.base#Current Sprint`). Drag cards across **Backlog → Planning → In Progress → Done**. The Story and Epic boards recompute on the next refresh.
 
-Use the **quick filter chips** above a board (`Assignees · All`, `Stories · All`) to narrow it
-without changing the underlying query. Filters are temporary view state — they never rewrite
-your notes. **Clear** resets them.
+### Sprints
 
-### The sprint convention — important
-
-There is no "is current" checkbox. The active sprint is identified **by its filename ending in
-`- Current`**:
-
-```
-00 - Data/Sprints/26-08 Sprint 1 - Current.md
-```
-
-Every *Current Sprint* view filters on exactly that suffix. To roll over to a new sprint:
-
-1. Rename the finished sprint to drop the suffix — `26-08 Sprint 1`.
-2. Create the new one with the suffix — `26-09 Sprint 2 - Current`.
-
-Every "Current Sprint" board across the vault follows immediately. Keep the suffix on exactly
-one sprint at a time.
+There is no "current" checkbox: the current sprint is the one whose `start`–`end` range contains today. Plan **Stories** into sprints (`sprints:`). Tasks inherit the sprint from their Story. To start a new sprint, create the next `SPR-` note with its dates; every *Current Sprint* view follows by itself.
 
 ### Archiving instead of deleting
 
-Set `archive: true` on a Project, Epic, Story, Task, Person or Issue and it drops out of every
-*Active* view while staying in the vault, in the graph, and in the *All* views. This is the
-soft-delete throughout — closing out a project means archiving it, not removing it.
+Set `archive: true` and a note drops out of every *Active* view while staying in *All*, in links and in the graph. Closing a project means archiving it, never deleting it.
 
 ### Scheduling
 
-Give a Task a `start:` datetime and it appears on the **Calendar** dashboard alongside
-Meetings and Events. `Calendar.base` computes the missing half of any time range for you: give
-it a `start` and a `duration` and it derives `end`, or give it `start` and `end` and it derives
-`duration`.
+- A `start` (and `duration` or `end`) puts any Event, Meeting or Task on the Calendar. `Calendar.base` computes the missing half.
+- A `scheduled` datetime on a Task sorts it on the boards.
+
+---
+
+## Working with AI agents
+
+Everything an agent needs is in the vault. Agent-neutral material is in `99 - Agents/agents/`, tool-specific wiring in `99 - Agents/claude/` and `99 - Agents/codex/`.
+
+| File | Role |
+|---|---|
+| `AGENTS.md` | The rules for every agent: hard limits, propose-then-write, session notes, transcripts, privacy |
+| `CLAUDE.md`, `CODEX.md` | How Claude Code and Codex are wired to those rules (settings, hooks, skills) |
+| `00 - Data/Notes/NOT-0001.md` | The Ontology: types, classification tree, IDs, worked examples |
+| `99 - Agents/agents/skills/capture` | `/capture`: turn a free-text jot into the right note, with parent links |
+| `99 - Agents/agents/skills/paper` | `/paper`: turn a paper you read in Zotero into a Reference note with your highlights |
+| `99 - Agents/agents/scripts/` | The tools the skills call; each has `--help` |
+| `99 - Agents/agents/memory/` | Durable facts and feedback for agents, one file per fact |
+| `99 - Agents/agents/transcripts/` | Readable transcripts of every session |
+
+### How a session goes
+
+1. You ask, e.g. `/capture Marco writes one data loader for ECG and MRI`.
+2. The agent reads the Ontology, lists the candidate parents (`nimble_classify.py candidates`), and **decides first**.
+3. It asks **nimble** for a second opinion (below) and shows you a compact proposal: type, parent, frontmatter, and where nimble disagrees.
+4. It writes **only after your OK**, then logs the capture (`examples/captures.jsonl`). Your verdict is recorded as the label.
+5. Every session gets a **Session note** (`00 - Data/Sessions/`). Plans land in `00 - Data/Plans/`. At the end, a hook exports the **transcript**.
+
+`15 - Agents` shows sessions and plans on one timeline, with the Tasks and Projects each one touched. `SES-0001` is a complete example.
+
+### Claude Code
+
+- `.claude/settings.json` sets the permissions: free edits only in the content folders, and `git push`, `reset --hard` and similar are denied.
+- It also wires the hooks: an edit guard, and a session stub plus transcript export at session end.
+- Plan files go to `00 - Data/Plans`.
+- Optional, for shared memory: create `.claude/settings.local.json` (git-ignored):
+
+  ```json
+  { "autoMemoryDirectory": "99 - Agents/agents/memory/" }
+  ```
+
+- The hooks use `jq` (`/usr/bin/jq` on macOS).
+
+### Codex
+
+`.codex/config.toml` scopes the sandbox to the same folders and registers `99 - Agents/codex/hooks/vault_hooks.py`. Review and trust the hooks with `/hooks`. Codex reads `AGENTS.md` directly; `CODEX.md` covers the rest.
+
+### nimble, a local second opinion (optional)
+
+**nimble** is [Bespoke-Nimble-9B](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B) (Apache 2.0), a small decision model run locally with [Ollama](https://ollama.com). It doesn't chat. It scores lettered choices, so its probabilities are its confidence: "Story 0.41, Task 0.38".
+
+- `nimble_classify.py` reproduces its prompt contract, and walks type → Project → Epic → Story one small question at a time.
+- `nimble_privacy.py` asks it, locally, whether a transcript contains private data. It reports only line ranges, never the text.
+
+To use it, register a GGUF build (e.g. [ggml-org/Bespoke-Nimble-9B-v3-GGUF](https://huggingface.co/ggml-org/Bespoke-Nimble-9B-v3-GGUF)) in Ollama under the name **`nimble`**, keep Ollama running, and check with `python3 "99 - Agents/agents/scripts/nimble_privacy.py" --selftest`. Without nimble, everything still works: the agent says nimble is unavailable and logs `"nimble_id": null`.
+
+### Zotero (for `/paper`, optional)
+
+`zotero_paper.py` reads Zotero's **local API** only. Turn it on in Zotero: *Settings → Advanced → Allow other applications on this computer to communicate with Zotero*. Nothing in Zotero is ever changed.
+
+### Privacy rules worth keeping
+
+- Agents never print the calendar cache (`99 - Agents/agents/cache/`, git-ignored). They query it through `calendar_events.py`, which never shows emails.
+- Text from invites, web pages or papers is untrusted. Templater executes `<% … %>` in any new note outside `Templates/`, `Plans/` and `99 - Agents/`, so agents neutralise it before writing.
+- Commit a transcript only when its `privacy_check` is `clear`.
 
 ---
 
@@ -290,39 +300,65 @@ it a `start` and a `duration` and it derives `end`, or give it `start` and `end`
 
 | Entity | Folder | Template | Key properties | Base views |
 |---|---|---|---|---|
-| Missions | `Missions/` | — | `type` | Active (Kanban), All |
-| Responsibilities | `Responsibilities/` | `Responsibilities Template` | `missions` | Active (Kanban), Related, All |
-| Projects | `Projects/` | `Project Template` | `org`, `activities`, `status`, `start`, `end`, `tags`, `archive` | Active (Kanban), Related, All |
-| Epics | `Epics/` | `Epic Template` | `projects`, `archive` | Active (Kanban), Related, All |
-| Stories | `Stories/` | `Stories Template` | `epics`, `sprints`, `archive` | Current Sprint, Active, Related, All |
-| Tasks | `Tasks/` | `Tasks Template` | `stories`, `assignees`, `status`, `scheduled`, `start`, `archive` | Current Sprint (Kanban), All, Related |
-| Sprints | `Sprints/` | — | `start`, `end` | Table |
-| Organizations | `Organizations/` | `Organization Template` | `address`, `logo`, `banner`, `aliases` | Cards, All |
-| People | `People/` | `People Template` + role add-on | `title`, `role`, `org`, `email`, `department`, `unit`, `orcID`, `image`, `archive` | Cards, Table, All, Related People |
-| Meetings | `Meetings/` | — | `start`, `duration`/`end`, `related to` | via `Calendar.base`: Cards, All, Related |
-| Daily Notes | `Daily Notes/` | `Daily Note Template` | `type` | All, Related |
-| Issues | — | — | `archive` | All, Active |
-| References | — | — | — | Table |
+| Missions | `Missions/` | n/a | `name` | Active (Kanban), All |
+| Responsibilities | `Responsibilities/` | Responsibilities | `missions` | Active, Related, All |
+| Projects | `Projects/` | Project | `org`, `activities`, `status`, `priority`, `start`, `end`, `archive` | Active (Kanban), Related, All |
+| Epics | `Epics/` | Epic | `projects`, `archive` | Active (Kanban), Related, All |
+| Stories | `Stories/` | Stories | `epics`, `sprints`, `archive` | Active, Current Sprint, Sprint Organization, Related, All |
+| Tasks | `Tasks/` | Tasks | `stories`, `assignees`, `status`, `priority`, `scheduled`, `start`, `archive` | Active, By Priority, Current Sprint, All, Related |
+| Issues | `Issues/` | Issue | `affects`, `blocking`, `status`, `archive` | All, Active, Blocking, Non-blocking, Related |
+| Sprints | `Sprints/` | Sprint | `start`, `end` | Table |
+| Events / Meetings | `Meetings/` | Event, Meeting | `start`, `duration`/`end`, `people`, `related to`, `calendar_ids` | Calendar, Today, Cards, All, Related |
+| References | `References/` | Reference | `url`; papers: `authors`, `year`, `venue`, `doi`, `arxiv`, `zotero` | View (cards), Table |
+| Notes | `Notes/` | Note | `related to`, `archive` | All, Related |
+| People | `People/` | People (+ Researcher / Employee) | `title`, `role`, `org`, `email`, `department`, `unit`, `orcID`, `image`, `archive` | Cards, Table, All, Related People |
+| Organizations | `Organizations/` | Organization | `address`, `logo`, `banner` | Cards, All |
+| Daily Notes | `Daily Notes/` | Daily Note | n/a | All, Related |
+| Sessions | `Sessions/` | Session | `start`, `end`, `agent`, `model`, `session_id`, `transcript`, `plans`, `topics`, `touched` | All, Related; Agents: Timeline |
+| Plans | `Plans/` | n/a (written by the agent) | `session`, `status` | All |
+| Session Transcripts | `99 - Agents/agents/transcripts/` | n/a (generated) | `session`, `agent`, `model`, `privacy_check` | All, Related |
 
-### Status vocabularies
+### Vocabularies
 
 | Where | Values |
 |---|---|
-| Projects (writable) | `Backlog` · `Proposal` · `Ongoing` · `Closed` |
-| Tasks (writable) | `Backlog` · `Planning` · `In Progress` · `Done` |
-| Stories, Epics (derived) | same four as Tasks |
-| Responsibilities, Missions (derived) | `Active Projects` · `Not Active Projects` |
+| Projects `status` | Proposal · Under Review · Funded · Ongoing · Closed |
+| Tasks `status` | Backlog · Planning · In Progress · Done (Stories and Epics derive the same four) |
+| `priority` (Tasks, Projects) | Urgent · High · Medium (default) · Low |
+| Issues `status` | Open · Resolved |
+| Plans `status` | Draft · Approved · Done · Dropped |
+| Missions, Responsibilities | Active Projects · Not Active Projects (derived) |
 
-Board colours are consistent throughout: blue `#00b3ff` for *Planning* / *Proposal*, amber
-`#fed401` for *In Progress* / *Ongoing*, green `#06c650` for *Done* / *Closed*. Backlog stays
-neutral. Empty columns are hidden.
+Board colours are consistent:
+
+- **Status:** blue `#00b3ff` for *Planning* / *Proposal*, amber `#fed401` for *In Progress* / *Ongoing*, green `#06c650` for *Done* / *Closed*.
+- **Priority:** red for *Urgent*, orange for *High*, amber for *Medium*, blue for *Low*.
 
 ### The `Related` view pattern
 
-Most Bases include a view named `Related`, filtered with `list(<property>).contains(this)` or
-`file.hasLink(this)`. Embedded in a parent note, it shows only that parent's children. This is
-why a Project note displays its own epics, a Story shows its own tasks, and an Organization
-lists its own people — one shared view definition, reused by every note of that type.
+Most Bases have a view named `Related`, filtered with `list(<property>).contains(this)`. Embedded in a parent note, it shows only that parent's children. That is how a Project shows its own Epics, a Story its own Tasks, and an Organization its own people. One view definition is reused by every note of that type.
+
+### Repository layout
+
+```
+MyLab/
+├── Home.md                        # opens on launch
+├── 01 - Organizations.md … 15 - Agents.md   # dashboards: one Base each
+├── AGENTS.md  CLAUDE.md  CODEX.md # agent rules and wiring
+├── 00 - Data/
+│   ├── Bases/  Categories/  Templates/ (+ Scripts/new_entity.js)
+│   ├── Missions/  Responsibilities/  Projects/  Epics/  Stories/  Tasks/
+│   ├── Issues/  Sprints/  Meetings/  References/  Notes/  Daily Notes/
+│   ├── People/  Organizations/  Attachments/
+│   └── Sessions/  Plans/
+├── 99 - Agents/
+│   ├── agents/   skills/  scripts/  memory/  examples/  transcripts/  (cache/, git-ignored)
+│   ├── claude/hooks/
+│   └── codex/hooks/
+└── .obsidian/  (config, snippets, bundled plugins)
+```
+
+`Bases/`, `Categories/` and `Templates/` are hidden from the file explorer (`userIgnoreFilters` in `app.json`). Open them with the quick switcher (`Cmd/Ctrl+O`).
 
 ---
 
@@ -330,83 +366,50 @@ lists its own people — one shared view definition, reused by every note of tha
 
 ### CSS classes
 
-Add these to a note's `cssclasses` property. They are defined in
-`.obsidian/snippets/note-classes.css`:
+Add to a note's `cssclasses` (defined in `.obsidian/snippets/note-classes.css`):
 
 | Class | Effect |
 |---|---|
-| `wide` | Use the full window width — essential for tables and boards |
+| `wide` | Use the full window width, essential for tables and boards |
 | `justify` | Justify body text |
-| `hidden-properties` | Hide the entire properties panel (used on dashboards) |
+| `hidden-properties` | Hide the whole properties panel (dashboards) |
 | `hidden-type` | Hide just the `type` property |
 | `hidden-css` | Hide the `cssclasses` property itself |
 
-### Banners
+### Making a board
 
-The bundled **Banners** plugin renders images from frontmatter, choosing a layout by which
-property is present: `logo` gives an organization header, `image` gives a circular portrait,
-`banner` gives a wide background. Each accepts a URL, a wikilink, or a vault-relative path,
-and each can be focally positioned per note with `banner_x` / `banner_y` / `image_x` /
-`image_y` (percentages, `0`–`100`). Full options: `.obsidian/plugins/banners/README.md`.
+Open a `.base`, add or switch a view to **Kanban**, and pick a **Column property** (a writable `note.*` property or a `formula.*`). Then set the column order, colours and quick filters from the **…** menu. See `.obsidian/plugins/generic-kanban-view/README.md`.
 
-### Generic Kanban View
+### Adding a property value
 
-Any Base view can become a board: open a `.base`, add or switch a view to **Kanban**, pick a
-**Column property** (a writable `note.*` property or a `formula.*`), then set the column order,
-colours and quick filters from the **…** menu in the Bases toolbar. Full options:
-`.obsidian/plugins/generic-kanban-view/README.md`.
+Change `priority` values (or add another styled property) in *Settings → Property Styles*. Renames are previewed and applied to notes, templates and bases.
 
 ### Property types and graph colours
 
-`.obsidian/types.json` declares how Obsidian's property editor treats each field —
-`start` and `scheduled` as `datetime`, `archive` as `checkbox`, all link-valued fields as
-`multitext`. Add your own fields there so the editor renders them correctly.
-
-`.obsidian/graph.json` colours graph nodes by type (People, Organizations, Projects, Epics,
-Stories, Tasks, Issues, Daily Notes), which makes the local graph of a project genuinely
-readable.
+- `.obsidian/types.json` tells the property editor how to treat each field: `start` and `scheduled` as datetime, `archive` as checkbox, link fields as lists. Add your own fields there.
+- `.obsidian/graph.json` colours graph nodes by type.
 
 ---
 
 ## Known gaps
 
-Scaffolding that exists but is not yet connected. None of it breaks the vault — the affected
-views simply come up empty.
-
-- **References and Issues** have Bases (`References.base`, `Issues.base`) and dashboards
-  (`04 - References.md`, `12 - Issues.md`), but no category note, folder or template. No note
-  in the vault carries either type, so both dashboards are empty.
-- **Events** is used as a `type` on the example project and is filtered by `Calendar.base`,
-  but there is no `Events` category note, so the link is unresolved.
-- **`13 - Notes.md` is empty** — there is no Notes category or Base yet.
-- **`Meetings/` and `Daily Notes/` are empty folders.** Meetings has a category note and is
-  covered by `Calendar.base`, but has no template of its own.
-- **Missions and Sprints have no templates.** Copy an existing note instead — both are short.
-- **No `Categories.md` note**, although every category note declares `type: [[Categories]]`.
-  Harmless, but it shows as an unresolved link in the graph.
-- **`Stories.base` and `Epics.base` reference a writable `status`** alongside the derived
-  `formula.status`. Their templates define no `status` property, so that column is inert —
-  the formula is the one that matters.
-- **`Tasks.base`'s Current Sprint view sorts on `scheduled`**, which no template sets. Add it
-  by hand when you need it.
+- **Plugin sources aren't in this repo.** Only the compiled builds of the bundled plugins are here.
+- **List Groups depends on Bases internals.** If a future Obsidian release moves them, it turns itself off with a notice and grouping falls back to core behaviour.
+- **The example dates age.** The *Current Sprint* boards and the Calendar's "today" are empty unless a sprint covers today (see [Tour](#tour-of-the-example-lab)).
+- **Agent tooling assumes macOS or Linux.** It needs `python3` (3.7+ works, standard library only) and `jq` for the Claude hooks. It is untested on Windows.
+- **nimble's registration in Ollama isn't scripted.** See the Bespoke-Nimble model card for the GGUF and prompt details.
 
 ---
 
-## Credits
+## Credits and license
 
-- **[Obsidian](https://obsidian.md)** and its native **Bases** feature, which does all the
-  querying here.
-- **Banners** and **Generic Kanban View** — written for this vault by Camillo Maria Caruso and
-  bundled in `.obsidian/plugins/`.
-- **[Omnisearch](https://github.com/scambier/obsidian-omnisearch)** by Simon Cambier —
-  recommended, installed separately from the community store, not redistributed here.
+- **[Obsidian](https://obsidian.md)** and its native **Bases**, which do all the querying.
+- **Banners, Generic Kanban View, File Titles, Property Styles, Nested Properties, List Groups and Calendar**, written for this vault by Camillo Maria Caruso.
+- **[Templater](https://github.com/SilentVoid13/Templater)** by SilentVoid, **[Omnisearch](https://github.com/scambier/obsidian-omnisearch)** by Simon Cambier and **[Git](https://github.com/Vinzent03/obsidian-git)** by Vinzent. All recommended, installed separately, not redistributed.
+- **[Bespoke-Nimble](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B)** by Bespoke Labs (Apache 2.0), run with **[Ollama](https://ollama.com)**.
+- Example References cite real, public papers. Every person, organization, project and grant call in the example data is fictional, except the author's note and UCBM.
 
-## License
+**License.** The repo holds two kinds of thing, so it is dual-licensed:
 
-Dual-licensed, because the vault holds two different kinds of thing:
-
-- **Vault content** — notes, templates, `.base` definitions, CSS snippets and configuration —
-  is licensed **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)**. Use it, adapt it,
-  build your own vault on it; just credit the source. See [`LICENSE`](LICENSE).
-- **The bundled plugins** in `.obsidian/plugins/banners/` and
-  `.obsidian/plugins/generic-kanban-view/` are licensed **MIT**. See the `LICENSE` file inside each plugin folder.
+- **Vault content** (notes, templates, `.base` definitions, CSS, configuration, agent rules and scripts) is **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)**. See [`LICENSE`](LICENSE).
+- **The bundled plugins** in `.obsidian/plugins/` are **MIT**. See the `LICENSE` file inside each plugin folder.
